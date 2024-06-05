@@ -1,0 +1,14 @@
+.active {
+  background: #7d4aea;
+  background: radial-gradient(circle, #7d4aea54 0%, #6748aa54 100%);
+  color: white !important;
+}
+
+test {
+  background-color: #2d2d2dac;
+}
+
+.upgrade-plan {
+  background: #7d4aea;
+  background: radial-gradient(circle, #7d4aea2a 0%, #9c59b604 100%);
+}
