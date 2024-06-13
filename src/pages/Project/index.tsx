@@ -1,5 +1,11 @@
 import { useState } from 'react';
-import { ChevronLeftIcon, ChevronRightIcon, Plus } from 'lucide-react';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Plus,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { CheckIcon } from '@/components/ui/checkIcon';
@@ -7,6 +13,12 @@ import NewGenerationModal from '@/components/NewGenerationModal';
 import { useParams } from 'react-router-dom';
 import { fadeAnimation } from '@/lib/animations';
 import ProjectHeader from './ProjectHeader';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 const images = [
   {
@@ -19,8 +31,15 @@ const images = [
   },
 ];
 
+enum Feedback {
+  Dislike = -1,
+  Neutral,
+  Like,
+}
+
 export default function Project() {
   const { id: projectId } = useParams<{ id: string }>();
+  const [liked, setLiked] = useState<Feedback>(Feedback.Neutral);
   console.log(projectId);
 
   const [selectedImage, setSelectedImage] = useState<number>(0);
@@ -52,11 +71,65 @@ export default function Project() {
                   type: 'just',
                   duration: 0.15,
                 }}
-                className="absolute line-clamp-1 top-0 w-full px-4 flex items-center text-md rounded-t-lg image-heading bg-[#000000d0] text-white"
+                className="absolute line-clamp-1 top-0 w-full px-4 flex items-center justify-between text-md rounded-t-lg image-heading bg-[#000000d0] text-white"
                 onMouseEnter={() => setShowHeading(true)}
                 onMouseLeave={() => setShowHeading(false)}
               >
                 <p className="line-clamp-1">{images[selectedImage].heading}</p>
+                <p className="flex gap-3">
+                  <span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {liked === Feedback.Like ? (
+                            <ThumbsUp
+                              onClick={() => setLiked(Feedback.Neutral)}
+                              fill="#9B59B6"
+                              strokeWidth={1}
+                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
+                            />
+                          ) : (
+                            <ThumbsUp
+                              onClick={() => setLiked(Feedback.Like)}
+                              fill="transparent"
+                              strokeWidth={2}
+                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                            />
+                          )}
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
+                          <p>Like</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                  <span>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger>
+                          {liked === Feedback.Dislike ? (
+                            <ThumbsDown
+                              onClick={() => setLiked(Feedback.Neutral)}
+                              fill="#eb4b4b"
+                              strokeWidth={1}
+                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
+                            />
+                          ) : (
+                            <ThumbsDown
+                              onClick={() => setLiked(Feedback.Dislike)}
+                              fill="transparent"
+                              strokeWidth={2}
+                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                            />
+                          )}
+                        </TooltipTrigger>
+                        <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
+                          <p>Dislike</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </span>
+                </p>
               </motion.div>
             )}
           </AnimatePresence>
