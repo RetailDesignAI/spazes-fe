@@ -10,24 +10,20 @@ type Props = {
 const ProjectCard = ({ project }: Props) => {
   return (
     <Card className="transition-colors border-none shadow hover:bg-[#282d33b4] duration-300 bg-custom-secondary shadow-neutral-600">
-      <Link to={`/projects/${project.id}`} className="block">
+      <Link to={`/projects/${project._id}`} className="block">
         <img
-          src={project.thumbnail}
+          src={project.images[0].url}
           alt={project.name}
           width={400}
           height={300}
           className="object-cover w-full h-48 rounded-t-lg"
         />
         <CardContent className="p-4">
-          <p className="text-lg font-semibold text-white line-clamp-1">
-            {project.name}
-          </p>
+          <p className="text-lg font-semibold text-white line-clamp-1">{project.name}</p>
           <div className="flex items-center justify-between mt-2">
-            <div className="text-xs text-custom-gray">
-              {new Date(project.date).toLocaleDateString()}
-            </div>
+            <div className="text-xs text-custom-gray">{new Date(project.createdAt).toLocaleDateString()}</div>
             <div className="flex items-center text-xs text-custom-gray">
-              <Image className="w-4 h-4 mr-1" /> {project.images}
+              <Image className="w-4 h-4 mr-1" /> {project.images.length}
             </div>
           </div>
         </CardContent>
