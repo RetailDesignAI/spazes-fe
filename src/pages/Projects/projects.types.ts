@@ -1,9 +1,11 @@
 export type Project = {
-  id: number;
+  _id: number;
   name: string;
-  images: number;
-  date: string;
-  thumbnail: string;
+  images: {
+    url: string;
+    prompt: string;
+  }[];
+  createdAt: string;
 };
 
 export type Filters = {

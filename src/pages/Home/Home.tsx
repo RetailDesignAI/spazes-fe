@@ -2,32 +2,52 @@ import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { fadeAnimation } from '@/lib/animations';
+import { useToast } from '@/components/ui/use-toast';
 import FileInput from '@/components/FileInput';
 import Spinner from '@/components/ui/spinner';
 import SendIcon from '@/components/ui/sendIcon';
 import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
-import { fadeAnimation } from '@/lib/animations';
+import api from '@/api/axiosConfig';
 
 export default function Home() {
   const PROMPT_SIZE_LIMIT: number = 500;
   const navigate = useNavigate();
   const [prompt, setPrompt] = useState<string>('');
-  const [showPrompts, setShowPrompts] = useState<boolean>(false);
+  const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
   const [uploadImage, setUploadImage] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
-
-  const waitFn = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+  const { toast } = useToast();
 
   const handleSubmit = async (e: any) => {
+    if (prompt === '' || prompt.length > PROMPT_SIZE_LIMIT) {
+      toast({
+        title: 'Invalid prompt',
+        description: 'Please enter a valid prompt',
+        variant: 'destructive',
+      });
+      return;
+    }
     e.preventDefault();
     setIsLoading(true);
-    setShowPrompts(true);
-    await waitFn(2000);
-    setIsLoading(false);
-    console.log(file);
+    try {
+      const res = await api.post('/prompts/generate?n=4', {
+        requirements: prompt,
+      });
+      const { prompts } = res.data;
+      setGeneratedPrompts(prompts);
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: error.response.data.message,
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+      console.log(file);
+    }
   };
 
   const handlePromptChange = (prompt: string) => {
@@ -39,14 +59,23 @@ export default function Home() {
   };
 
   const handleImageGeneration = async () => {
-    navigate('/project');
+    try {
+      const res = await api.post('/images/generate', {
+        prompts: generatedPrompts,
+      });
+      const { projectId } = res.data;
+      navigate(`/projects/${projectId}`);
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: error.response.data.message,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
-    <div
-      key="1"
-      className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4"
-    >
+    <div key="1" className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4">
       {uploadImage && (
         <AnimatePresence>
           <motion.div
@@ -92,16 +121,10 @@ export default function Home() {
           </p>
         </div>
       </motion.div>
-      {showPrompts && (
+      {generatedPrompts.length > 0 && (
         <AnimatePresence>
-          <motion.div
-            {...fadeAnimation}
-            className="flex flex-col w-full max-w-4xl p-6 space-y-6 text-white rounded-lg"
-          >
-            <PromptsList
-              selectPrompt={handlePromptChange}
-              fetchingPrompts={isLoading}
-            />
+          <motion.div {...fadeAnimation} className="flex flex-col w-full max-w-4xl p-6 space-y-6 text-white rounded-lg">
+            <PromptsList prompts={generatedPrompts} selectPrompt={handlePromptChange} fetchingPrompts={isLoading} />
             <Button
               onClick={handleImageGeneration}
               className="bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] text-white shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
