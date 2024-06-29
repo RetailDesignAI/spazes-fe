@@ -12,11 +12,15 @@ type Props = {
 const MainImage = ({ images, selectedImage, handleNext, handlePrevious, setShowHeading }: Props) => {
   return (
     <div
-      className="aspect-[4/3] rounded-lg overflow-hidden"
+      className="aspect-[16/9] rounded-lg overflow-hidden"
       onMouseEnter={() => setShowHeading(true)}
       onMouseLeave={() => setShowHeading(false)}
     >
-      <CustomImage alt="Selected Image" className="object-cover w-full h-full" src={images[selectedImage]?.url} />
+      <CustomImage
+        alt="Selected Image"
+        className="object-cover aspect-[16/9] w-full h-full"
+        src={images[selectedImage]?.url}
+      />
       <button
         className={`${
           selectedImage === 0 ? 'text-gray-400' : 'text-white hover:text-gray-300'

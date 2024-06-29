@@ -6,10 +6,18 @@ import { fadeAnimation } from '@/lib/animations';
 import { useToast } from '@/components/ui/use-toast';
 import FileInput from '@/components/FileInput';
 import Spinner from '@/components/ui/spinner';
-import SendIcon from '@/components/ui/sendIcon';
 import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Send, Text } from 'lucide-react';
 import api from '@/api/axiosConfig';
+
+enum Loading {
+  Prompts = 'Prompts',
+  SinglePrompt = 'SinglePrompt',
+  ImagineAll = 'ImagineAll',
+  None = 'None',
+}
 
 export default function Home() {
   const PROMPT_SIZE_LIMIT: number = 500;
@@ -17,11 +25,11 @@ export default function Home() {
   const [prompt, setPrompt] = useState<string>('');
   const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
   const [uploadImage, setUploadImage] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<Loading>(Loading.None);
   const [file, setFile] = useState<File | null>(null);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: any) => {
+  const generatePrompts = async (e: any) => {
     if (prompt === '' || prompt.length > PROMPT_SIZE_LIMIT) {
       toast({
         title: 'Invalid prompt',
@@ -31,7 +39,7 @@ export default function Home() {
       return;
     }
     e.preventDefault();
-    setIsLoading(true);
+    setLoading(Loading.Prompts);
     try {
       const res = await api.post('/prompts/generate?n=4', {
         requirements: prompt,
@@ -45,7 +53,7 @@ export default function Home() {
         variant: 'destructive',
       });
     } finally {
-      setIsLoading(false);
+      setLoading(Loading.None);
       console.log(file);
     }
   };
@@ -58,10 +66,11 @@ export default function Home() {
     setFile(file);
   };
 
-  const handleImageGeneration = async () => {
+  const handleImageGeneration = async (prompts: string[], loadingType: Loading) => {
     try {
+      setLoading(loadingType);
       const res = await api.post('/projects', {
-        prompts: generatedPrompts,
+        prompts,
       });
       const { projectId } = res.data;
       navigate(`/projects/${projectId}`);
@@ -71,6 +80,8 @@ export default function Home() {
         description: error.response.data.message,
         variant: 'destructive',
       });
+    } finally {
+      setLoading(Loading.None);
     }
   };
 
@@ -98,12 +109,36 @@ export default function Home() {
             className="w-full pr-4 font-medium bg-transparent outline-none resize-none font- text-l"
           ></textarea>
           <div className="flex items-center space-x-2">
-            <Button
-              onClick={handleSubmit}
-              className="bg-[#7D4AEA] text-white rounded-full p-5 border-2 border-transparent hover:border-[#7D4AEA]"
-            >
-              {isLoading ? <Spinner /> : <SendIcon />}
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={generatePrompts}
+                    className="bg-[#7D4AEA] text-white rounded-full p-2 border-2 border-transparent hover:border-[#7D4AEA] w-10 h-10"
+                  >
+                    {loading === Loading.Prompts ? <Spinner /> : <Text className="w-4 h-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Generate Prompts</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    onClick={() => handleImageGeneration([prompt], Loading.SinglePrompt)}
+                    className="bg-[#7D4AEA] text-white rounded-full p-2 border-2 border-transparent hover:border-[#7D4AEA] w-10 h-10"
+                  >
+                    {loading === Loading.SinglePrompt ? <Spinner /> : <Send className="w-4 h-4" />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Generate Images</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <div className="flex items-center justify-between w-full">
@@ -124,12 +159,16 @@ export default function Home() {
       {generatedPrompts.length > 0 && (
         <AnimatePresence>
           <motion.div {...fadeAnimation} className="flex flex-col w-full max-w-4xl p-6 space-y-6 text-white rounded-lg">
-            <PromptsList prompts={generatedPrompts} selectPrompt={handlePromptChange} fetchingPrompts={isLoading} />
+            <PromptsList
+              prompts={generatedPrompts}
+              selectPrompt={handlePromptChange}
+              fetchingPrompts={loading === Loading.Prompts}
+            />
             <Button
-              onClick={handleImageGeneration}
+              onClick={() => handleImageGeneration(generatedPrompts, Loading.ImagineAll)}
               className="bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] text-white shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
             >
-              Imagine All
+              {loading === Loading.ImagineAll ? <Spinner /> : 'Imagine All'}
             </Button>
           </motion.div>
         </AnimatePresence>

@@ -170,7 +170,7 @@ export default function Project() {
               {index === selectedImage && (
                 <motion.div
                   {...fadeAnimation}
-                  className="absolute inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
+                  className="absolute w-[100px] h-[80px] inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
                 >
                   <CheckIcon className="w-6 h-6 text-white" />
                 </motion.div>
