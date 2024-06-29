@@ -8,6 +8,7 @@ import FileInput from '@/components/FileInput';
 import Spinner from '@/components/ui/spinner';
 import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
+import { AppRoutes } from '@/lib/constants/routes';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Send, Text } from 'lucide-react';
 import api from '@/api/axiosConfig';
@@ -73,7 +74,7 @@ export default function Home() {
         prompts,
       });
       const { projectId } = res.data;
-      navigate(`/projects/${projectId}`);
+      navigate(`${AppRoutes.Projects}/${projectId}`);
     } catch (error: any) {
       toast({
         title: 'Uh oh! Something went wrong.',

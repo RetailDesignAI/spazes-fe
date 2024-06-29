@@ -1,4 +1,4 @@
-export enum Routes {
+export enum AppRoutes {
   Home = '/',
   Projects = '/projects',
   Project = '/projects/:id',
