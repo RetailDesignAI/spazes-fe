@@ -4,31 +4,20 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { DropdownProps, DropdownValues, buttons } from './project.types';
 
-const buttons = [
-  {
-    value: 'editByPrompt',
-    label: 'Edit by Prompt',
-  },
-  {
-    value: 'editByImage',
-    label: 'Edit by Image',
-  },
-];
-
-const EditDropdown = () => {
+const EditDropdown = ({ value, changeValue }: DropdownProps) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState('editByPrompt');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" role="combobox" aria-expanded={open} className="w-[200px] justify-between">
+        <Button variant="outline" role="combobox" aria-expanded={open} className="w-full justify-between">
           {buttons.find((button) => button.value === value)?.label}
           <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0 dark">
+      <PopoverContent className="w-full p-0 dark">
         <Command>
           <CommandGroup>
             <CommandList>
@@ -37,7 +26,7 @@ const EditDropdown = () => {
                   key={button.value}
                   value={button.value}
                   onSelect={(currentValue: string) => {
-                    setValue(currentValue);
+                    changeValue(currentValue as DropdownValues);
                     setOpen(false);
                   }}
                 >

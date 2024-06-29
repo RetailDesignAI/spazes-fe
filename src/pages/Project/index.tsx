@@ -13,21 +13,18 @@ import { useToast } from '@/components/ui/use-toast';
 import MainImage from './MainImage';
 import CustomImage from '@/components/ui/image';
 import EditDropdown from './EditDropdown';
-
-enum Feedback {
-  Dislike = -1,
-  Neutral,
-  Like,
-}
+import EditPrompts from './EditPrompts';
+import { DropdownValues, Feedback, IImage } from './project.types';
 
 export default function Project() {
   const { toast } = useToast();
   const { id: projectId } = useParams<{ id: string }>();
-  const [images, setImages] = useState<{ prompt: string; url: string }[]>([]);
+  const [images, setImages] = useState<{ prompt: string; url: string; _id: string }[]>([]);
   const [liked, setLiked] = useState<Feedback>(Feedback.Neutral);
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [showHeading, setShowHeading] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
+  const [dropdownValue, setDropdownValue] = useState(DropdownValues.Prompt);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -72,6 +69,14 @@ export default function Project() {
 
   const handlePrevious = () => {
     setSelectedImage((prev) => (prev === 0 ? prev : prev - 1));
+  };
+
+  const handleDropdownValue = (value: DropdownValues) => {
+    setDropdownValue(value);
+  };
+
+  const addImage = (image: IImage) => {
+    setImages((prev) => [...prev, image]);
   };
 
   return (
@@ -193,8 +198,11 @@ export default function Project() {
             </Dialog>
           </motion.div>
         </div>
-        <div>
-          <EditDropdown />
+        <div className="w-[300px]">
+          <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
+          {dropdownValue === DropdownValues.Prompt ? (
+            <EditPrompts dropdownValue={dropdownValue} imageId={images[selectedImage]?._id} addImage={addImage} />
+          ) : null}
         </div>
       </div>
     </div>
