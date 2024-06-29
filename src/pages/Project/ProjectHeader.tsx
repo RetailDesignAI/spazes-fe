@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
-const ProjectHeader = () => {
-  const [projectName, setProjectName] = useState('Project Name');
+type Props = {
+  title: string;
+  setProjectName: (name: string) => void;
+};
+
+const ProjectHeader = ({ title, setProjectName }: Props) => {
   const [showError, setShowError] = useState(false);
 
   const handleProjectNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -22,13 +26,9 @@ const ProjectHeader = () => {
             className="text-lg bg-transparent border-b-[0.05em] h-full border-transparent px-1 duration-300 hover:border-custom-gray focus:border-custom-gray outline-none"
             onChange={handleProjectNameChange}
             placeholder="Untitled Project"
-            value={projectName}
+            value={title}
           />
-          {showError && (
-            <p className="absolute text-xs text-red-500 -bottom-5">
-              Enter a valid name!
-            </p>
-          )}
+          {showError && <p className="absolute text-xs text-red-500 -bottom-5">Enter a valid name!</p>}
         </div>
       </div>
     </header>

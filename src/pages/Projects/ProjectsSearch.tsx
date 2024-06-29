@@ -2,6 +2,8 @@ import SearchBar from '@/components/SearchBar';
 import { useEffect, useMemo, useState } from 'react';
 import { Project } from './projects.types';
 import { FILTERS } from './constants';
+// import useDebouncedValue from '@/hooks/useDebounceValue';
+// import api from '@/api/axiosConfig';
 
 type Props = {
   projects: Project[];
@@ -10,21 +12,20 @@ type Props = {
 
 const ProjectsSearch = ({ projects, changeFilteredProjects }: Props) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
+  // const debouncedSearchTerm = useDebouncedValue(searchTerm, 1000);
   const [sortBy, setSortBy] = useState<string>(FILTERS.Latest);
 
   const filteredProjects = useMemo(() => {
     return projects
-      .filter((project) =>
-        project.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      ?.filter((project) => project.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => {
         switch (sortBy) {
           case FILTERS.Latest:
-            return new Date(b.date).getTime() - new Date(a.date).getTime();
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           case FILTERS.Oldest:
-            return new Date(a.date).getTime() - new Date(b.date).getTime();
+            return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
           case FILTERS.Images:
-            return b.images - a.images;
+            return b.imageCount - a.imageCount;
           default:
             return 0;
         }
