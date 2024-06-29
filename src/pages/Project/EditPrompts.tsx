@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { EditPromptsProps } from './project.types';
+import { DropdownValues, EditPromptsProps } from './project.types';
 import { useToast } from '@/components/ui/use-toast';
 import api from '@/api/axiosConfig';
 import { useState } from 'react';
@@ -36,22 +36,28 @@ const EditPrompts = ({ dropdownValue, imageId, addImage }: EditPromptsProps) => 
 
   return (
     <div>
-      <textarea
-        placeholder="Type your search prompt here..."
-        onChange={(e) => setSearchPrompt(e.target.value)}
-        className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
-      ></textarea>
-      <textarea
-        onChange={(e) => setPrompt(e.target.value)}
-        placeholder="Type your replace prompt here..."
-        className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
-      ></textarea>
-      <Button
-        className="w-full rounded-md mt-2 bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
-        onClick={handleSubmit}
-      >
-        {isLoading ? <Spinner /> : 'Generate'}
-      </Button>
+      <form onSubmit={handleSubmit}>
+        {dropdownValue === DropdownValues.Prompt && (
+          <textarea
+            required
+            placeholder="Type your search prompt here..."
+            onChange={(e) => setSearchPrompt(e.target.value)}
+            className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
+          ></textarea>
+        )}
+        <textarea
+          required
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Type your replace prompt here..."
+          className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
+        ></textarea>
+        <Button
+          type="submit"
+          className="w-full rounded-md mt-2 bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
+        >
+          {isLoading ? <Spinner /> : 'Generate'}
+        </Button>
+      </form>
     </div>
   );
 };

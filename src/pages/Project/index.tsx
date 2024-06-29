@@ -200,9 +200,7 @@ export default function Project() {
         </div>
         <div className="w-[300px]">
           <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
-          {dropdownValue === DropdownValues.Prompt ? (
-            <EditPrompts dropdownValue={dropdownValue} imageId={images[selectedImage]?._id} addImage={addImage} />
-          ) : null}
+          <EditPrompts dropdownValue={dropdownValue} imageId={images[selectedImage]?._id} addImage={addImage} />
         </div>
       </div>
     </div>
