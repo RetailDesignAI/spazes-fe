@@ -107,7 +107,7 @@ export default function Home() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Type your prompt here..."
-            className="w-full pr-4 font-medium bg-transparent outline-none resize-none font- text-l"
+            className="w-full pr-4 font-medium bg-transparent outline-none resize-none text-l"
           ></textarea>
           <div className="flex items-center space-x-2">
             <TooltipProvider>

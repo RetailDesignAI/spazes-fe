@@ -12,21 +12,19 @@ import api from '@/api/axiosConfig';
 import { useToast } from '@/components/ui/use-toast';
 import MainImage from './MainImage';
 import CustomImage from '@/components/ui/image';
-
-enum Feedback {
-  Dislike = -1,
-  Neutral,
-  Like,
-}
+import EditDropdown from './EditDropdown';
+import EditPrompts from './EditPrompts';
+import { DropdownValues, Feedback, IImage } from './project.types';
 
 export default function Project() {
   const { toast } = useToast();
   const { id: projectId } = useParams<{ id: string }>();
-  const [images, setImages] = useState<{ prompt: string; url: string }[]>([]);
+  const [images, setImages] = useState<{ prompt: string; url: string; _id: string }[]>([]);
   const [liked, setLiked] = useState<Feedback>(Feedback.Neutral);
   const [selectedImage, setSelectedImage] = useState<number>(0);
   const [showHeading, setShowHeading] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
+  const [dropdownValue, setDropdownValue] = useState(DropdownValues.Prompt);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -73,124 +71,139 @@ export default function Project() {
     setSelectedImage((prev) => (prev === 0 ? prev : prev - 1));
   };
 
+  const handleDropdownValue = (value: DropdownValues) => {
+    setDropdownValue(value);
+  };
+
+  const addImage = (image: IImage) => {
+    setImages((prev) => [...prev, image]);
+  };
+
   return (
     <div className="w-full min-h-screen bg-custom-primary">
       <ProjectHeader title={projectName} setProjectName={setProjectName} />
-      <div className="flex flex-col items-center justify-center w-full gap-8 p-4 md:mt-10 bg-[#121213]">
-        <motion.div {...fadeAnimation} className="max-w-[550px] w-full relative">
-          <AnimatePresence>
-            {showHeading && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: '50px' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{
-                  type: 'just',
-                  duration: 0.15,
-                }}
-                className="absolute line-clamp-1 top-0 w-full px-4 flex items-center justify-between text-md rounded-t-lg image-heading bg-[#000000d0] text-white"
-                onMouseEnter={() => setShowHeading(true)}
-                onMouseLeave={() => setShowHeading(false)}
-              >
-                <p className="line-clamp-1">{images[selectedImage]?.prompt}</p>
-                <p className="flex gap-3">
-                  <span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {liked === Feedback.Like ? (
-                            <ThumbsUp
-                              onClick={() => setLiked(Feedback.Neutral)}
-                              fill="#9B59B6"
-                              strokeWidth={1}
-                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
-                            />
-                          ) : (
-                            <ThumbsUp
-                              onClick={() => setLiked(Feedback.Like)}
-                              fill="transparent"
-                              strokeWidth={2}
-                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                            />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
-                          <p>Like</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </span>
-                  <span>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {liked === Feedback.Dislike ? (
-                            <ThumbsDown
-                              onClick={() => setLiked(Feedback.Neutral)}
-                              fill="#eb4b4b"
-                              strokeWidth={1}
-                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
-                            />
-                          ) : (
-                            <ThumbsDown
-                              onClick={() => setLiked(Feedback.Dislike)}
-                              fill="transparent"
-                              strokeWidth={2}
-                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                            />
-                          )}
-                        </TooltipTrigger>
-                        <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
-                          <p>Dislike</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </span>
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <MainImage
-            images={images}
-            selectedImage={selectedImage}
-            handleNext={handleNext}
-            handlePrevious={handlePrevious}
-            setShowHeading={setShowHeading}
-          />
-        </motion.div>
-        <motion.div {...fadeAnimation} className="flex justify-center w-full max-w-full gap-4 overflow-auto">
-          {images.map((image, index) => (
-            <div
-              key={image.prompt}
-              className="relative flex-shrink-0 cursor-pointer group"
-              onClick={() => setSelectedImage(index)}
-            >
-              <CustomImage alt="Thumbnail 1" className="rounded-lg object-cover w-[100px] h-[80px]" src={image?.url} />
-              {index === selectedImage && (
+      <div className="flex max-lg:flex-col justify-center w-full gap-5 p-4 md:mt-10 bg-[#121213]">
+        <div className="flex flex-col items-center justify-center gap-8">
+          <motion.div {...fadeAnimation} className="max-w-[550px] w-full relative">
+            <AnimatePresence>
+              {showHeading && (
                 <motion.div
-                  {...fadeAnimation}
-                  className="absolute w-[100px] h-[80px] inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: '50px' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{
+                    type: 'just',
+                    duration: 0.15,
+                  }}
+                  className="absolute top-0 w-full px-4 flex items-center justify-between text-md rounded-t-lg image-heading bg-[#000000d0] text-white z-50 text-xs gap-3"
+                  onMouseEnter={() => setShowHeading(true)}
+                  onMouseLeave={() => setShowHeading(false)}
                 >
-                  <CheckIcon className="w-6 h-6 text-white" />
+                  <p className="line-clamp-2">{images[selectedImage]?.prompt}</p>
+                  <p className="flex gap-3">
+                    <span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {liked === Feedback.Like ? (
+                              <ThumbsUp
+                                onClick={() => setLiked(Feedback.Neutral)}
+                                fill="#9B59B6"
+                                strokeWidth={1}
+                                className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
+                              />
+                            ) : (
+                              <ThumbsUp
+                                onClick={() => setLiked(Feedback.Like)}
+                                fill="transparent"
+                                strokeWidth={2}
+                                className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                              />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
+                            <p>Like</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                    <span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            {liked === Feedback.Dislike ? (
+                              <ThumbsDown
+                                onClick={() => setLiked(Feedback.Neutral)}
+                                fill="#eb4b4b"
+                                strokeWidth={1}
+                                className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
+                              />
+                            ) : (
+                              <ThumbsDown
+                                onClick={() => setLiked(Feedback.Dislike)}
+                                fill="transparent"
+                                strokeWidth={2}
+                                className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                              />
+                            )}
+                          </TooltipTrigger>
+                          <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
+                            <p>Dislike</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </span>
+                  </p>
                 </motion.div>
               )}
-            </div>
-          ))}
-          <Dialog>
-            <DialogTrigger>
-              <div className="relative flex-shrink-0 border border-gray-500 hover:border-[#7D4AEA] cursor-pointer group w-[100px] h-[80px] rounded-lg">
-                <motion.div
-                  {...fadeAnimation}
-                  className="absolute inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
-                >
-                  <Plus color="white" />
-                </motion.div>
+            </AnimatePresence>
+            <MainImage
+              images={images}
+              selectedImage={selectedImage}
+              handleNext={handleNext}
+              handlePrevious={handlePrevious}
+              setShowHeading={setShowHeading}
+            />
+          </motion.div>
+          <motion.div {...fadeAnimation} className="flex justify-center w-full max-w-full gap-4">
+            {images.map((image, index) => (
+              <div
+                key={image.prompt}
+                className="relative flex-shrink-0 cursor-pointer group bg-black/50 w-[100px] h-[80px] rounded-lg"
+                onClick={() => setSelectedImage(index)}
+              >
+                <CustomImage alt="Thumbnail 1" className="rounded-lg object-cover w-[100px] h-[80px]" src={image?.url} />
+                {index === selectedImage && (
+                  <motion.div
+                    {...fadeAnimation}
+                    className="absolute w-[100px] h-[80px] inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
+                  >
+                    <CheckIcon className="w-6 h-6 text-white" />
+                  </motion.div>
+                )}
               </div>
-            </DialogTrigger>
-            <NewGenerationModal />
-          </Dialog>
-        </motion.div>
+            ))}
+            <Dialog>
+              <DialogTrigger>
+                <div className="relative flex-shrink-0 border border-gray-500 hover:border-[#7D4AEA] cursor-pointer group w-[100px] h-[80px] rounded-lg">
+                  <motion.div
+                    {...fadeAnimation}
+                    className="absolute inset-0 flex items-center justify-center transition-opacity rounded-lg bg-black/50"
+                  >
+                    <Plus color="white" />
+                  </motion.div>
+                </div>
+              </DialogTrigger>
+              <NewGenerationModal />
+            </Dialog>
+          </motion.div>
+        </div>
+        <div className="w-[300px]">
+          <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
+          {dropdownValue === DropdownValues.Prompt ? (
+            <EditPrompts dropdownValue={dropdownValue} imageId={images[selectedImage]?._id} addImage={addImage} />
+          ) : null}
+        </div>
       </div>
     </div>
   );
