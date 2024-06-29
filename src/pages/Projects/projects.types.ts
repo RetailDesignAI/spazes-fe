@@ -1,10 +1,12 @@
 export type Project = {
   _id: number;
   name: string;
-  images: {
+  images?: {
     url: string;
     prompt: string;
   }[];
+  imageCount: number;
+  thumbnail?: string;
   createdAt: string;
 };
 

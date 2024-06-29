@@ -8,9 +8,9 @@ import { useToast } from '@/components/ui/use-toast';
 import api from '@/api/axiosConfig';
 
 export default function Projects() {
+  const { toast } = useToast();
   const [projects, setProjects] = useState<Project[]>([]);
   const [filteredProjects, setFilteredProjects] = useState(projects);
-  const { toast } = useToast();
 
   useEffect(() => {
     const fetchAllProjects = async () => {
