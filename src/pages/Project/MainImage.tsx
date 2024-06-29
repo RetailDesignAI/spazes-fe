@@ -1,5 +1,5 @@
+import CustomImage from '@/components/ui/image';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
-import './MaskEditor.css';
 
 type Props = {
   images: { prompt: string; url: string }[];
@@ -16,11 +16,7 @@ const MainImage = ({ images, selectedImage, handleNext, handlePrevious, setShowH
       onMouseEnter={() => setShowHeading(true)}
       onMouseLeave={() => setShowHeading(false)}
     >
-      <img
-        alt="Selected Image"
-        className="object-contain w-full h-full"
-        src={images[selectedImage]?.url}
-      />
+      <CustomImage alt="Selected Image" className="object-contain w-full h-full" src={images[selectedImage]?.url} />
       <button
         className={`${
           selectedImage === 0 ? 'text-gray-400' : 'text-white hover:text-gray-300'

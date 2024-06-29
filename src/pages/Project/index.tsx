@@ -11,6 +11,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import api from '@/api/axiosConfig';
 import { useToast } from '@/components/ui/use-toast';
 import MainImage from './MainImage';
+import CustomImage from '@/components/ui/image';
 
 enum Feedback {
   Dislike = -1,
@@ -19,8 +20,8 @@ enum Feedback {
 }
 
 export default function Project() {
-  const { id: projectId } = useParams<{ id: string }>();
   const { toast } = useToast();
+  const { id: projectId } = useParams<{ id: string }>();
   const [images, setImages] = useState<{ prompt: string; url: string }[]>([]);
   const [liked, setLiked] = useState<Feedback>(Feedback.Neutral);
   const [selectedImage, setSelectedImage] = useState<number>(0);
@@ -46,6 +47,24 @@ export default function Project() {
     fetchProject();
   }, [toast, projectId]);
 
+  // const renameProject = async () => {
+  //   try {
+  //     await api.put(`/projects/${projectId}`, {
+  //       name: projectName,
+  //     });
+  //     toast({
+  //       title: 'Project name updated successfully!',
+  //     });
+  //     setFetchedName(projectName);
+  //   } catch (error: any) {
+  //     toast({
+  //       title: 'Uh oh! Something went wrong.',
+  //       description: error.response.data.message,
+  //       variant: 'destructive',
+  //     });
+  //   }
+  // };
+
   const handleNext = () => {
     setSelectedImage((prev) => (prev === images.length - 1 ? prev : prev + 1));
   };
@@ -56,7 +75,10 @@ export default function Project() {
 
   return (
     <div className="w-full min-h-screen bg-custom-primary">
-      <ProjectHeader title={projectName} setProjectName={setProjectName} />
+      <ProjectHeader
+        title={projectName}
+        setProjectName={setProjectName}
+      />
       <div className="flex flex-col items-center justify-center w-full gap-8 p-4 md:mt-10 bg-[#121213]">
         <motion.div {...fadeAnimation} className="max-w-[425px] w-full relative">
           <AnimatePresence>
@@ -147,7 +169,7 @@ export default function Project() {
               className="relative flex-shrink-0 cursor-pointer group"
               onClick={() => setSelectedImage(index)}
             >
-              <img alt="Thumbnail 1" className="rounded-lg object-cover w-[100px] h-[80px]" src={image?.url} />
+              <CustomImage alt="Thumbnail 1" className="rounded-lg object-cover w-[100px] h-[80px]" src={image?.url} />
               {index === selectedImage && (
                 <motion.div
                   {...fadeAnimation}

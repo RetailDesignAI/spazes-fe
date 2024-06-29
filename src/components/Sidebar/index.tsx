@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
 import { motion, useAnimationControls } from 'framer-motion';
 import NavigationLink from './NavigationLink';
-import {
-  ChevronRightIcon,
-  FolderClosed,
-  Home,
-  MoveUpRight,
-} from 'lucide-react';
+import { ChevronRightIcon, FolderClosed, Home, MoveUpRight } from 'lucide-react';
 import { SIDEBAR_DEFAULT_WIDTH, SIDEBAR_MIN_WIDTH } from '@/lib/constants';
-import './Sidebar.css';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import './Sidebar.css';
 
 type Props = {
   changeWidth: (width: string) => void;
@@ -45,7 +40,7 @@ const svgVariants = {
 };
 
 const Navigation = ({ changeWidth }: Props) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const containerControls = useAnimationControls();
   const svgControls = useAnimationControls();
@@ -86,9 +81,7 @@ const Navigation = ({ changeWidth }: Props) => {
           <ChevronRightIcon className="w-4 h-4" color="white" />
         </motion.div>
         <div className="w-full py-3 logo">
-          <h1 className="h-[10%] text-xl font-bold text-center text-white">
-            {isOpen ? 'Logo' : 'L'}
-          </h1>
+          <h1 className="h-[10%] text-xl font-bold text-center text-white">{isOpen ? 'Logo' : 'L'}</h1>
         </div>
         <div className="flex flex-col gap-3 h-[60%] py-3">
           <NavigationLink to="/" name="Home">
@@ -104,22 +97,14 @@ const Navigation = ({ changeWidth }: Props) => {
               isOpen ? 'p-4' : 'p-2'
             } flex flex-col justify-center items-center border-purple upgrade-plan rounded-lg overflow-clip line-clamp-1 whitespace-nowrap`}
           >
-            {isOpen && (
-              <p className="text-center text-[13px] text-custom-gray">
-                Out of credits?
-              </p>
-            )}
+            {isOpen && <p className="text-center text-[13px] text-custom-gray">Out of credits?</p>}
             <Button
-              className={`rounded-lg bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] ${
-                !isOpen && '!w-[30px] !h-[30px]'
-              }`}
+              className={`rounded-lg bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] ${!isOpen && '!w-[30px] !h-[30px]'}`}
             >
               {isOpen ? (
                 <>
                   Upgrade to
-                  <span className="p-1 ml-1 text-sm bg-black rounded-md">
-                    PRO
-                  </span>
+                  <span className="p-1 ml-1 text-sm bg-black rounded-md">PRO</span>
                 </>
               ) : (
                 <MoveUpRight className="text-white stroke-[1.25] min-w-5 w-5" />
@@ -133,9 +118,7 @@ const Navigation = ({ changeWidth }: Props) => {
               <AvatarImage src="https://github.com/shadcn.png" />
               <AvatarFallback>HJ</AvatarFallback>
             </Avatar>
-            <p className="text-sm tracking-wide text-inherit font-poppins overflow-clip whitespace-nowrap">
-              Hrishabh Jain
-            </p>
+            <p className="text-sm tracking-wide text-inherit font-poppins overflow-clip whitespace-nowrap">Hrishabh Jain</p>
           </div>
         </div>
       </motion.nav>
