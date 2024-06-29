@@ -75,12 +75,9 @@ export default function Project() {
 
   return (
     <div className="w-full min-h-screen bg-custom-primary">
-      <ProjectHeader
-        title={projectName}
-        setProjectName={setProjectName}
-      />
+      <ProjectHeader title={projectName} setProjectName={setProjectName} />
       <div className="flex flex-col items-center justify-center w-full gap-8 p-4 md:mt-10 bg-[#121213]">
-        <motion.div {...fadeAnimation} className="max-w-[425px] w-full relative">
+        <motion.div {...fadeAnimation} className="max-w-[550px] w-full relative">
           <AnimatePresence>
             {showHeading && (
               <motion.div
