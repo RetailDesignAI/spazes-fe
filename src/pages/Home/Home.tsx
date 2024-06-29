@@ -60,7 +60,7 @@ export default function Home() {
 
   const handleImageGeneration = async () => {
     try {
-      const res = await api.post('/images/generate', {
+      const res = await api.post('/projects', {
         prompts: generatedPrompts,
       });
       const { projectId } = res.data;
