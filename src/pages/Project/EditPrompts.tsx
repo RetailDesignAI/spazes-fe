@@ -64,7 +64,7 @@ const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
           type="submit"
           className="w-full rounded-md mt-2 bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
         >
-          {isLoading ? <Spinner className="text-white" /> : 'Generate'}
+          {isLoading ? <Spinner className="fill-white" /> : 'Generate'}
         </Button>
       </form>
     </div>

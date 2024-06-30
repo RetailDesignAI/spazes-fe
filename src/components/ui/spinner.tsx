@@ -1,9 +1,11 @@
 export default function Spinner(props: any) {
+  const { className } = props;
+
   return (
     <svg
       {...props}
       aria-hidden="true"
-      className="text-gray-200 animate-spin dark:text-gray-600 fill-[#9A59B6]"
+      className={`text-gray-500 animate-spin dark:text-gray-400 ${className}`}
       viewBox="0 0 100 101"
       fill="none"
       width="20"

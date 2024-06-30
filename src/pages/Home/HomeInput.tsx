@@ -73,12 +73,14 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
           <div className="flex items-center space-x-2">
             <CustomTooltipButton
               onClick={generatePrompts}
-              buttonContent={loading === Loading.Prompts ? <Spinner /> : <Text className="w-4 h-4" />}
+              buttonContent={loading === Loading.Prompts ? <Spinner className="fill-white" /> : <Text className="w-4 h-4" />}
               tooltipContent="Generate Prompts"
             />
             <CustomTooltipButton
               onClick={() => handleImageGeneration([prompt], Loading.SinglePrompt)}
-              buttonContent={loading === Loading.SinglePrompt ? <Spinner /> : <Send className="w-4 h-4" />}
+              buttonContent={
+                loading === Loading.SinglePrompt ? <Spinner className="fill-white" /> : <Send className="w-4 h-4" />
+              }
               tooltipContent="Generate Images"
             />
           </div>
@@ -110,7 +112,7 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
               onClick={() => handleImageGeneration(generatedPrompts, Loading.ImagineAll)}
               className="bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] text-white shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
             >
-              {loading === Loading.ImagineAll ? <Spinner /> : 'Imagine All'}
+              {loading === Loading.ImagineAll ? <Spinner className="fill-white" /> : 'Imagine All'}
             </Button>
           </motion.div>
         </AnimatePresence>
