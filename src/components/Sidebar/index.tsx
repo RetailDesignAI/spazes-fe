@@ -112,7 +112,7 @@ const Navigation = ({ changeWidth }: Props) => {
             </Button>
           </div>
           <div
-            className={`flex gap-3 transition-colors duration-200 rounded-lg cursor-pointer hover:stroke-neutral-100 stroke-neutral-400 text-custom-gray hover:text-neutral-100 place-items-center p-2`}
+            className={`flex gap-3 transition-colors duration-200 rounded-lg cursor-pointer hover:stroke-neutral-100 stroke-neutral-400 text-custom-gray hover:text-neutral-100 place-items-center p-2 overflow-clip whitespace-nowrap`}
           >
             <Avatar className="w-8 h-8">
               <AvatarImage src="https://github.com/shadcn.png" />
