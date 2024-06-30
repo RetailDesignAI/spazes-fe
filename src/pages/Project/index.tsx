@@ -21,6 +21,7 @@ import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
 import FullScreenLoader from '@/components/FullScreenLoader';
 import PromptCard from '@/components/PromptCard';
 import { CardType } from '@/components/PromptCard/promptCards.types';
+import useDebouncedValue from '@/hooks/useDebounceValue';
 
 export default function Project() {
   const { toast } = useToast();
@@ -36,6 +37,7 @@ export default function Project() {
   const [open, setOpen] = useState<boolean>(false);
   const [sameProject, setSameProject] = useState<boolean>(false);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const debouncedName = useDebouncedValue(projectName, 500);
 
   useEffect(() => {
     if (imageRefs.current[selectedImage]) {
@@ -68,6 +70,25 @@ export default function Project() {
     dispatch(setImages([]));
     fetchProject();
   }, [toast, projectId, dispatch, navigate]);
+
+  useEffect(() => {
+    const renameProject = async () => {
+      if (debouncedName === '') return;
+      try {
+        await api.put(`/projects/${projectId}/rename`, {
+          name: debouncedName,
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Uh oh! Something went wrong.',
+          description: error.response.data.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    renameProject();
+  }, [debouncedName, projectId, toast]);
 
   const handleDropdownValue = (value: DropdownValues) => {
     setDropdownValue(value);
