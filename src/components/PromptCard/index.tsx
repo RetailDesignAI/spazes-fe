@@ -18,7 +18,7 @@ const PromptCard = ({ triggerElement, prompt, type }: PromptHoverCardProps) => {
   if (type === CardType.Popover) {
     return (
       <Popover>
-        <PopoverTrigger>{triggerElement}</PopoverTrigger>
+        <PopoverTrigger className="flex items-center">{triggerElement}</PopoverTrigger>
         <PopoverContent className="w-[300px] dark">
           <div className="text-xs">
             <div className="w-full">{prompt}</div>
