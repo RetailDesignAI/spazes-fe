@@ -1,36 +1,26 @@
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
+import FileInput from '@/components/FileInput';
 import { fadeAnimation } from '@/lib/animations';
 import { useToast } from '@/components/ui/use-toast';
-import FileInput from '@/components/FileInput';
+import { HomeInputProps, Loading } from './home.types';
+import CustomTooltipButton from '@/components/ui/customTooltipButton';
 import Spinner from '@/components/ui/spinner';
+import { Send, Text } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
-import { AppRoutes } from '@/lib/constants/routes';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Send, Text } from 'lucide-react';
 import api from '@/api/axiosConfig';
 
-enum Loading {
-  Prompts = 'Prompts',
-  SinglePrompt = 'SinglePrompt',
-  ImagineAll = 'ImagineAll',
-  None = 'None',
-}
-
-export default function Home() {
+const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProps) => {
   const PROMPT_SIZE_LIMIT: number = 500;
-  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [uploadImage, setUploadImage] = useState<boolean>(false);
+  const [file, setFile] = useState<File | null>(null);
   const [prompt, setPrompt] = useState<string>('');
   const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
-  const [uploadImage, setUploadImage] = useState<boolean>(false);
-  const [loading, setLoading] = useState<Loading>(Loading.None);
-  const [file, setFile] = useState<File | null>(null);
-  const { toast } = useToast();
 
-  const generatePrompts = async (e: any) => {
+  const generatePrompts = async () => {
     if (prompt === '' || prompt.length > PROMPT_SIZE_LIMIT) {
       toast({
         title: 'Invalid prompt',
@@ -39,7 +29,6 @@ export default function Home() {
       });
       return;
     }
-    e.preventDefault();
     setLoading(Loading.Prompts);
     try {
       const res = await api.post('/prompts/generate?n=4', {
@@ -67,37 +56,9 @@ export default function Home() {
     setFile(file);
   };
 
-  const handleImageGeneration = async (prompts: string[], loadingType: Loading) => {
-    try {
-      setLoading(loadingType);
-      const res = await api.post('/projects', {
-        prompts,
-      });
-      const { projectId } = res.data;
-      navigate(`${AppRoutes.Projects}/${projectId}`);
-    } catch (error: any) {
-      toast({
-        title: 'Uh oh! Something went wrong.',
-        description: error.response.data.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(Loading.None);
-    }
-  };
-
   return (
     <div key="1" className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4">
-      {uploadImage && (
-        <AnimatePresence>
-          <motion.div
-            {...fadeAnimation}
-            className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mb-2"
-          >
-            <FileInput handleFileChange={handleFileChange} />
-          </motion.div>
-        </AnimatePresence>
-      )}
+      {uploadImage && <FileInput handleFileChange={handleFileChange} />}
       <motion.div
         {...fadeAnimation}
         className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white"
@@ -107,39 +68,19 @@ export default function Home() {
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             placeholder="Type your prompt here..."
-            className="w-full pr-4 font-medium bg-transparent outline-none resize-none font- text-l"
+            className="w-full pr-4 font-medium bg-transparent outline-none resize-none text-l"
           ></textarea>
           <div className="flex items-center space-x-2">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    onClick={generatePrompts}
-                    className="bg-[#7D4AEA] text-white rounded-full p-2 border-2 border-transparent hover:border-[#7D4AEA] w-10 h-10"
-                  >
-                    {loading === Loading.Prompts ? <Spinner /> : <Text className="w-4 h-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Generate Prompts</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <Button
-                    onClick={() => handleImageGeneration([prompt], Loading.SinglePrompt)}
-                    className="bg-[#7D4AEA] text-white rounded-full p-2 border-2 border-transparent hover:border-[#7D4AEA] w-10 h-10"
-                  >
-                    {loading === Loading.SinglePrompt ? <Spinner /> : <Send className="w-4 h-4" />}
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Generate Images</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <CustomTooltipButton
+              onClick={generatePrompts}
+              buttonContent={loading === Loading.Prompts ? <Spinner /> : <Text className="w-4 h-4" />}
+              tooltipContent="Generate Prompts"
+            />
+            <CustomTooltipButton
+              onClick={() => handleImageGeneration([prompt], Loading.SinglePrompt)}
+              buttonContent={loading === Loading.SinglePrompt ? <Spinner /> : <Send className="w-4 h-4" />}
+              tooltipContent="Generate Images"
+            />
           </div>
         </div>
         <div className="flex items-center justify-between w-full">
@@ -176,4 +117,6 @@ export default function Home() {
       )}
     </div>
   );
-}
+};
+
+export default HomeInput;

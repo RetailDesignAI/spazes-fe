@@ -1,15 +1,16 @@
 import CustomImage from '@/components/ui/image';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { changeSelectedImage } from '@/providers/redux/project/projectSlice';
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 
 type Props = {
-  images: { prompt: string; url: string }[];
-  selectedImage: number;
-  handleNext: () => void;
-  handlePrevious: () => void;
   setShowHeading: (value: boolean) => void;
 };
 
-const MainImage = ({ images, selectedImage, handleNext, handlePrevious, setShowHeading }: Props) => {
+const MainImage = ({ setShowHeading }: Props) => {
+  const dispatch = useAppDispatch();
+  const { images, selectedImage } = useAppSelector((state) => state.project);
+
   return (
     <div
       className="aspect-[16/9] rounded-lg overflow-hidden"
@@ -25,7 +26,7 @@ const MainImage = ({ images, selectedImage, handleNext, handlePrevious, setShowH
         className={`${
           selectedImage === 0 ? 'text-gray-400' : 'text-white hover:text-gray-300'
         } absolute p-1 transition-colors -translate-y-1/2 rounded-full top-1/2 left-4 bg-[#121213]`}
-        onClick={handlePrevious}
+        onClick={() => dispatch(changeSelectedImage(selectedImage === 0 ? selectedImage : selectedImage - 1))}
         disabled={selectedImage === 0}
       >
         <ChevronLeftIcon className="w-5 h-5" />
@@ -36,7 +37,9 @@ const MainImage = ({ images, selectedImage, handleNext, handlePrevious, setShowH
           selectedImage === images.length - 1 ? 'text-gray-400' : 'text-white hover:text-gray-300'
         } absolute p-1 transition-colors -translate-y-1/2 rounded-full top-1/2 right-4 bg-[#121213]`}
         disabled={selectedImage === images.length - 1}
-        onClick={handleNext}
+        onClick={() =>
+          dispatch(changeSelectedImage(selectedImage === images.length - 1 ? selectedImage : selectedImage + 1))
+        }
       >
         <ChevronRightIcon className="w-5 h-5" />
         <span className="sr-only">Next</span>
