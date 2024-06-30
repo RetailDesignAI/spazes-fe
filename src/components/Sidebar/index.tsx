@@ -40,7 +40,7 @@ const svgVariants = {
 };
 
 const Navigation = ({ changeWidth }: Props) => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   const containerControls = useAnimationControls();
   const svgControls = useAnimationControls();
