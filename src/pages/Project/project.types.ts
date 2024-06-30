@@ -16,8 +16,10 @@ export type DropdownProps = {
 
 export type EditPromptsProps = {
   dropdownValue: DropdownValues;
-  imageId: string;
+  url: string;
   addImage: (image: IImage) => void;
+  changeSelectedImage: (index: number) => void;
+  totalImages: number;
 };
 
 export const buttons = [
