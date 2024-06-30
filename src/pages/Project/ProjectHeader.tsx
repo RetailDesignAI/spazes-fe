@@ -21,9 +21,9 @@ const ProjectHeader = ({ title, setProjectName }: Props) => {
   return (
     <header className="px-8 pt-4 md:px-20">
       <div className="flex items-center mx-auto">
-        <div className="relative h-10">
+        <div className="relative h-10 flex gap-3 items-center">
           <input
-            className="text-lg bg-transparent border-b-[0.05em] h-full border-transparent px-1 duration-300 hover:border-custom-gray focus:border-custom-gray outline-none"
+            className="text-lg bg-transparent border-b-[0.05em] h-full border-transparent px-1 duration-300 hover:border-custom-gray focus:border-custom-gray outline-none w-full"
             onChange={handleProjectNameChange}
             placeholder="Untitled Project"
             value={title}

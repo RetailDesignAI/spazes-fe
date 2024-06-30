@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Plus, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Download, Plus, Text, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { CheckIcon } from '@/components/ui/checkIcon';
@@ -19,6 +19,9 @@ import { setImages, changeSelectedImage } from '@/providers/redux/project/projec
 import CustomTooltip from '@/components/ui/customTooltip';
 import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
 import FullScreenLoader from '@/components/FullScreenLoader';
+import PromptCard from '@/components/PromptCard';
+import { CardType } from '@/components/PromptCard/promptCards.types';
+import useDebouncedValue from '@/hooks/useDebounceValue';
 
 export default function Project() {
   const { toast } = useToast();
@@ -34,6 +37,7 @@ export default function Project() {
   const [open, setOpen] = useState<boolean>(false);
   const [sameProject, setSameProject] = useState<boolean>(false);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const debouncedName = useDebouncedValue(projectName, 500);
 
   useEffect(() => {
     if (imageRefs.current[selectedImage]) {
@@ -67,6 +71,25 @@ export default function Project() {
     fetchProject();
   }, [toast, projectId, dispatch, navigate]);
 
+  useEffect(() => {
+    const renameProject = async () => {
+      if (debouncedName === '') return;
+      try {
+        await api.put(`/projects/${projectId}/rename`, {
+          name: debouncedName,
+        });
+      } catch (error: any) {
+        toast({
+          title: 'Uh oh! Something went wrong.',
+          description: error.response.data.message,
+          variant: 'destructive',
+        });
+      }
+    };
+
+    renameProject();
+  }, [debouncedName, projectId, toast]);
+
   const handleDropdownValue = (value: DropdownValues) => {
     setDropdownValue(value);
   };
@@ -80,6 +103,13 @@ export default function Project() {
     setTimeout(() => {
       if (!value) setSameProject(false);
     }, 500);
+  };
+
+  const downloadImage = () => {
+    const link = document.createElement('a');
+    link.href = images[selectedImage]?.url;
+    link.download = 'image.webp';
+    link.click();
   };
 
   if (fullPageLoader) {
@@ -157,10 +187,34 @@ export default function Project() {
                   </motion.div>
                 )}
               </AnimatePresence>
+              <div className="absolute bottom-2 right-2 flex z-50 gap-2">
+                <CustomTooltip
+                  tooltipContent="Download Image"
+                  triggerElement={
+                    <p onClick={downloadImage} className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
+                      <Download className="w-4 h-4" />
+                    </p>
+                  }
+                />
+                <CustomTooltip
+                  tooltipContent="Show Prompt"
+                  triggerElement={
+                    <PromptCard
+                      triggerElement={
+                        <p className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
+                          <Text className="w-4 h-4" />
+                        </p>
+                      }
+                      prompt={images[selectedImage]?.prompt}
+                      type={CardType.Popover}
+                    />
+                  }
+                />
+              </div>
               <MainImage setShowHeading={setShowHeading} />
             </motion.div>
             <motion.div {...fadeAnimation} className="flex w-full max-w-full gap-4 items-center">
-              <div className="flex justify-start gap-4 overflow-x-auto  overflow-y-clip">
+              <div className="flex justify-start gap-4 overflow-x-auto overflow-y-clip scrollbar-hidden">
                 {images.map((image, index) => (
                   <div
                     key={image.prompt}

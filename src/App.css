@@ -93,3 +93,7 @@ html {
 .image-heading {
   color: white;
 }
+
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
