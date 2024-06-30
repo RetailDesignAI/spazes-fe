@@ -47,14 +47,14 @@ const EditPrompts = ({ dropdownValue, url, addImage, changeSelectedImage, totalI
             required
             placeholder="Type your search prompt here..."
             onChange={(e) => setSearchPrompt(e.target.value)}
-            className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
+            className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[100px] rounded-md"
           ></textarea>
         )}
         <textarea
           required
           onChange={(e) => setPrompt(e.target.value)}
           placeholder="Type your replace prompt here..."
-          className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[75px] rounded-md"
+          className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[100px] rounded-md"
         ></textarea>
         <Button
           type="submit"
