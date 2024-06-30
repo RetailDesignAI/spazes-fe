@@ -4,50 +4,62 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { CheckIcon } from '@/components/ui/checkIcon';
 import NewGenerationModal from '@/components/NewGenerationModal';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { fadeAnimation } from '@/lib/animations';
 import ProjectHeader from './ProjectHeader';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import api from '@/api/axiosConfig';
 import { useToast } from '@/components/ui/use-toast';
-import MainImage from './MainImage';
 import CustomImage from '@/components/ui/image';
+import MainImage from './MainImage';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import EditDropdown from './EditDropdown';
 import EditPrompts from './EditPrompts';
 import { DropdownValues, Feedback, IImage } from './project.types';
+import { setImages, changeSelectedImage, addImages } from '@/providers/redux/project/projectSlice';
+import CustomTooltip from '@/components/ui/customTooltip';
+import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
+import FullScreenLoader from '@/components/FullScreenLoader';
 
 export default function Project() {
   const { toast } = useToast();
   const { id: projectId } = useParams<{ id: string }>();
-  const [images, setImages] = useState<{ prompt: string; url: string; _id: string }[]>([]);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { images, selectedImage } = useAppSelector((state) => state.project);
+  const { fullPageLoader } = useAppSelector((state) => state.loaders);
   const [liked, setLiked] = useState<Feedback>(Feedback.Neutral);
-  const [selectedImage, setSelectedImage] = useState<number>(0);
   const [showHeading, setShowHeading] = useState<boolean>(false);
   const [projectName, setProjectName] = useState<string>('');
   const [dropdownValue, setDropdownValue] = useState(DropdownValues.Prompt);
+  const [open, setOpen] = useState<boolean>(false);
+  const [sameProject, setSameProject] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
+        dispatch(setFullLoader(true));
         const res = await api.get(`/projects/${projectId}`);
         const { project } = res.data;
         setProjectName(project.name);
-        setImages(project.images);
+        dispatch(setImages(project.images));
       } catch (error: any) {
         toast({
           title: 'Uh oh! Something went wrong.',
           description: error.response.data.message,
           variant: 'destructive',
         });
+        navigate(`/projects`);
+      } finally {
+        dispatch(setFullLoader(false));
       }
     };
-
+    dispatch(setImages([]));
     fetchProject();
-  }, [toast, projectId]);
+  }, [toast, projectId, dispatch, navigate]);
 
   // const renameProject = async () => {
   //   try {
-  //     await api.put(`/projects/${projectId}`, {
+  //     await api.put(`/projects/${projectId}/rename`, {
   //       name: projectName,
   //     });
   //     toast({
@@ -68,12 +80,23 @@ export default function Project() {
   };
 
   const addImage = (image: IImage) => {
-    setImages((prev) => [...prev, image]);
+    dispatch(addImages([image]));
   };
 
-  const changeSelectedImage = (index: number) => {
-    setSelectedImage(index);
+  const changeSameProject = (value: boolean) => {
+    setSameProject(value);
   };
+
+  const handleDialogChange = (value: boolean) => {
+    setOpen(value);
+    setTimeout(() => {
+      if (!value) setSameProject(false);
+    }, 500);
+  };
+
+  if (fullPageLoader) {
+    return <FullScreenLoader />;
+  }
 
   return (
     <div className="w-full min-h-screen bg-custom-primary">
@@ -98,75 +121,61 @@ export default function Project() {
                   <p className="line-clamp-2">{images[selectedImage]?.prompt}</p>
                   <p className="flex gap-3">
                     <span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            {liked === Feedback.Like ? (
-                              <ThumbsUp
-                                onClick={() => setLiked(Feedback.Neutral)}
-                                fill="#9B59B6"
-                                strokeWidth={1}
-                                className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
-                              />
-                            ) : (
-                              <ThumbsUp
-                                onClick={() => setLiked(Feedback.Like)}
-                                fill="transparent"
-                                strokeWidth={2}
-                                className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                              />
-                            )}
-                          </TooltipTrigger>
-                          <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
-                            <p>Like</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <CustomTooltip
+                        tooltipContent="Like"
+                        triggerElement={
+                          liked === Feedback.Like ? (
+                            <ThumbsUp
+                              onClick={() => setLiked(Feedback.Neutral)}
+                              fill="#9B59B6"
+                              strokeWidth={1}
+                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
+                            />
+                          ) : (
+                            <ThumbsUp
+                              onClick={() => setLiked(Feedback.Like)}
+                              fill="transparent"
+                              strokeWidth={2}
+                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                            />
+                          )
+                        }
+                      />
                     </span>
                     <span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            {liked === Feedback.Dislike ? (
-                              <ThumbsDown
-                                onClick={() => setLiked(Feedback.Neutral)}
-                                fill="#eb4b4b"
-                                strokeWidth={1}
-                                className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
-                              />
-                            ) : (
-                              <ThumbsDown
-                                onClick={() => setLiked(Feedback.Dislike)}
-                                fill="transparent"
-                                strokeWidth={2}
-                                className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                              />
-                            )}
-                          </TooltipTrigger>
-                          <TooltipContent className="text-white shadow border-[#2e3136] bg-custom-secondary">
-                            <p>Dislike</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <CustomTooltip
+                        tooltipContent="Dislike"
+                        triggerElement={
+                          liked === Feedback.Dislike ? (
+                            <ThumbsDown
+                              onClick={() => setLiked(Feedback.Neutral)}
+                              fill="#eb4b4b"
+                              strokeWidth={1}
+                              className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
+                            />
+                          ) : (
+                            <ThumbsDown
+                              onClick={() => setLiked(Feedback.Dislike)}
+                              fill="transparent"
+                              strokeWidth={2}
+                              className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                            />
+                          )
+                        }
+                      />
                     </span>
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-            <MainImage
-              images={images}
-              selectedImage={selectedImage}
-              handleNext={() => changeSelectedImage(selectedImage === images.length - 1 ? selectedImage : selectedImage + 1)}
-              handlePrevious={() => changeSelectedImage(selectedImage === 0 ? selectedImage : selectedImage - 1)}
-              setShowHeading={setShowHeading}
-            />
+            <MainImage setShowHeading={setShowHeading} />
           </motion.div>
           <motion.div {...fadeAnimation} className="flex justify-center w-full max-w-full gap-4">
             {images.map((image, index) => (
               <div
                 key={image.prompt}
                 className="relative flex-shrink-0 cursor-pointer group bg-black/50 w-[100px] h-[80px] rounded-lg"
-                onClick={() => setSelectedImage(index)}
+                onClick={() => dispatch(changeSelectedImage(index))}
               >
                 <CustomImage alt="Thumbnail 1" className="rounded-lg object-cover w-[100px] h-[80px]" src={image?.url} />
                 {index === selectedImage && (
@@ -179,7 +188,7 @@ export default function Project() {
                 )}
               </div>
             ))}
-            <Dialog>
+            <Dialog open={open} onOpenChange={handleDialogChange}>
               <DialogTrigger>
                 <div className="relative flex-shrink-0 border border-gray-500 hover:border-[#7D4AEA] cursor-pointer group w-[100px] h-[80px] rounded-lg">
                   <motion.div
@@ -190,7 +199,11 @@ export default function Project() {
                   </motion.div>
                 </div>
               </DialogTrigger>
-              <NewGenerationModal />
+              <NewGenerationModal
+                handleDialogChange={handleDialogChange}
+                sameProject={sameProject}
+                setSameProject={changeSameProject}
+              />
             </Dialog>
           </motion.div>
         </div>
