@@ -5,9 +5,13 @@ import { Button } from '@/components/ui/button';
 import { DropdownValues, EditPromptsProps } from './project.types';
 import { useToast } from '@/components/ui/use-toast';
 import Spinner from '@/components/ui/spinner';
+import { addImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 
-const EditPrompts = ({ dropdownValue, url, addImage, changeSelectedImage, totalImages }: EditPromptsProps) => {
+const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
+  const { images, selectedImage } = useAppSelector((state) => state.project);
   const { id: projectId } = useParams<{ id: string }>();
   const [searchPrompt, setSearchPrompt] = useState<string>('');
   const [prompt, setPrompt] = useState<string>('');
@@ -19,14 +23,14 @@ const EditPrompts = ({ dropdownValue, url, addImage, changeSelectedImage, totalI
       setIsLoading(true);
       if (dropdownValue) {
         const res = await api.post('/edit/search-replace', {
-          url,
+          url: images[selectedImage].url,
           searchPrompt,
           replacePrompt: prompt,
           projectId,
         });
         const image = res.data.image;
-        addImage(image);
-        changeSelectedImage(totalImages);
+        dispatch(addImages([image]));
+        dispatch(changeSelectedImage(0));
       }
     } catch (error: any) {
       toast({

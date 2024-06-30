@@ -20,7 +20,7 @@ export const projectSlice = createSlice({
       state.images = payload;
     },
     addImages: (state, { payload }) => {
-      state.images.push(...payload);
+      state.images.unshift(...payload);
     },
     changeSelectedImage: (state, { payload }) => {
       state.selectedImage = payload;

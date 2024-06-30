@@ -4,7 +4,7 @@ import api from '@/api/axiosConfig';
 import { DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Loading } from '@/pages/Home/home.types';
 import HomeInput from '@/pages/Home/HomeInput';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { useAppDispatch } from '@/hooks/useRedux';
 import { addImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
 
 type NewGenerationModalProps = {
@@ -17,7 +17,6 @@ const NewGenerationModal = ({ handleDialogChange, sameProject, setSameProject }:
   const navigate = useNavigate();
   const { id: projectId } = useParams();
   const dispatch = useAppDispatch();
-  const { images } = useAppSelector((state) => state.project);
   const [loading, setLoading] = useState<Loading>(Loading.None);
 
   const changeLoading = (loadingType: Loading) => {
@@ -31,9 +30,8 @@ const NewGenerationModal = ({ handleDialogChange, sameProject, setSameProject }:
         prompts,
       });
       const newImages = res.data.images;
-      const newSelectedImage = images.length;
       dispatch(addImages(newImages));
-      dispatch(changeSelectedImage(newSelectedImage));
+      dispatch(changeSelectedImage(0));
       handleDialogChange(false);
       setSameProject(false);
     } catch (error: any) {

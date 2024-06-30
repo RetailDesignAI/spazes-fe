@@ -14,8 +14,8 @@ import MainImage from './MainImage';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import EditDropdown from './EditDropdown';
 import EditPrompts from './EditPrompts';
-import { DropdownValues, Feedback, IImage } from './project.types';
-import { setImages, changeSelectedImage, addImages } from '@/providers/redux/project/projectSlice';
+import { DropdownValues, Feedback } from './project.types';
+import { setImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
 import CustomTooltip from '@/components/ui/customTooltip';
 import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
 import FullScreenLoader from '@/components/FullScreenLoader';
@@ -69,10 +69,6 @@ export default function Project() {
 
   const handleDropdownValue = (value: DropdownValues) => {
     setDropdownValue(value);
-  };
-
-  const addImage = (image: IImage) => {
-    dispatch(addImages([image]));
   };
 
   const changeSameProject = (value: boolean) => {
@@ -205,13 +201,7 @@ export default function Project() {
           </div>
           <div className="w-full lg:w-2/5">
             <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
-            <EditPrompts
-              dropdownValue={dropdownValue}
-              url={images[selectedImage]?.url}
-              addImage={addImage}
-              changeSelectedImage={changeSelectedImage}
-              totalImages={images.length}
-            />
+            <EditPrompts dropdownValue={dropdownValue} />
           </div>
         </div>
       </div>
