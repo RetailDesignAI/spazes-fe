@@ -1,27 +1,32 @@
+import { FormEvent, useState } from 'react';
+import api from '@/api/axiosConfig';
+import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { DropdownValues, EditPromptsProps } from './project.types';
 import { useToast } from '@/components/ui/use-toast';
-import api from '@/api/axiosConfig';
-import { useState } from 'react';
 import Spinner from '@/components/ui/spinner';
 
-const EditPrompts = ({ dropdownValue, imageId, addImage }: EditPromptsProps) => {
+const EditPrompts = ({ dropdownValue, url, addImage, changeSelectedImage, totalImages }: EditPromptsProps) => {
   const { toast } = useToast();
+  const { id: projectId } = useParams<{ id: string }>();
   const [searchPrompt, setSearchPrompt] = useState<string>('');
   const [prompt, setPrompt] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     try {
       setIsLoading(true);
       if (dropdownValue) {
         const res = await api.post('/edit/search-replace', {
-          imageId,
+          url,
           searchPrompt,
           replacePrompt: prompt,
+          projectId,
         });
         const image = res.data.image;
         addImage(image);
+        changeSelectedImage(totalImages);
       }
     } catch (error: any) {
       toast({
@@ -55,7 +60,7 @@ const EditPrompts = ({ dropdownValue, imageId, addImage }: EditPromptsProps) => 
           type="submit"
           className="w-full rounded-md mt-2 bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
         >
-          {isLoading ? <Spinner /> : 'Generate'}
+          {isLoading ? <Spinner className="text-white" /> : 'Generate'}
         </Button>
       </form>
     </div>

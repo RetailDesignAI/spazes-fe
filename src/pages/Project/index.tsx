@@ -63,20 +63,16 @@ export default function Project() {
   //   }
   // };
 
-  const handleNext = () => {
-    setSelectedImage((prev) => (prev === images.length - 1 ? prev : prev + 1));
-  };
-
-  const handlePrevious = () => {
-    setSelectedImage((prev) => (prev === 0 ? prev : prev - 1));
-  };
-
   const handleDropdownValue = (value: DropdownValues) => {
     setDropdownValue(value);
   };
 
   const addImage = (image: IImage) => {
     setImages((prev) => [...prev, image]);
+  };
+
+  const changeSelectedImage = (index: number) => {
+    setSelectedImage(index);
   };
 
   return (
@@ -160,8 +156,8 @@ export default function Project() {
             <MainImage
               images={images}
               selectedImage={selectedImage}
-              handleNext={handleNext}
-              handlePrevious={handlePrevious}
+              handleNext={() => changeSelectedImage(selectedImage === images.length - 1 ? selectedImage : selectedImage + 1)}
+              handlePrevious={() => changeSelectedImage(selectedImage === 0 ? selectedImage : selectedImage - 1)}
               setShowHeading={setShowHeading}
             />
           </motion.div>
@@ -200,7 +196,13 @@ export default function Project() {
         </div>
         <div className="w-[300px]">
           <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
-          <EditPrompts dropdownValue={dropdownValue} imageId={images[selectedImage]?._id} addImage={addImage} />
+          <EditPrompts
+            dropdownValue={dropdownValue}
+            url={images[selectedImage]?.url}
+            addImage={addImage}
+            changeSelectedImage={changeSelectedImage}
+            totalImages={images.length}
+          />
         </div>
       </div>
     </div>
