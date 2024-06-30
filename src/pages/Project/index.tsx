@@ -160,7 +160,7 @@ export default function Project() {
               <MainImage setShowHeading={setShowHeading} />
             </motion.div>
             <motion.div {...fadeAnimation} className="flex w-full max-w-full gap-4 items-center">
-              <div className="flex justify-start gap-4 overflow-x-auto  overflow-y-clip">
+              <div className="flex justify-start gap-4 overflow-x-auto overflow-y-clip scrollbar-hidden">
                 {images.map((image, index) => (
                   <div
                     key={image.prompt}
