@@ -21,11 +21,20 @@ const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      if (dropdownValue) {
+      if (dropdownValue === DropdownValues.Prompt) {
         const res = await api.post('/edit/search-replace', {
           url: images[selectedImage].url,
           searchPrompt,
           replacePrompt: prompt,
+          projectId,
+        });
+        const image = res.data.image;
+        dispatch(addImages([image]));
+        dispatch(changeSelectedImage(0));
+      } else if (dropdownValue === DropdownValues.Structure) {
+        const res = await api.post('/edit/structure', {
+          url: images[selectedImage].url,
+          prompt,
           projectId,
         });
         const image = res.data.image;
@@ -48,16 +57,14 @@ const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
       <form onSubmit={handleSubmit}>
         {dropdownValue === DropdownValues.Prompt && (
           <textarea
-            required
             placeholder="Type your search prompt here..."
             onChange={(e) => setSearchPrompt(e.target.value)}
             className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[100px] rounded-md"
           ></textarea>
         )}
         <textarea
-          required
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Type your replace prompt here..."
+          placeholder="Type your prompt here..."
           className="w-full p-2 bg-custom-secondary outline-none resize-none text-sm mt-2 h-[100px] rounded-md"
         ></textarea>
         <Button
