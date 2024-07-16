@@ -1,6 +1,7 @@
 export enum DropdownValues {
   Prompt = 'editByPrompt',
   Image = 'editByImage',
+  Structure = 'editByStructure',
 }
 
 export interface IImage {
@@ -26,6 +27,10 @@ export const buttons = [
   {
     value: DropdownValues.Image,
     label: 'Edit by Image',
+  },
+  {
+    value: DropdownValues.Structure,
+    label: 'Edit by Structure',
   },
 ];
 

@@ -17,13 +17,7 @@ type Props = {
   filters: Filters;
 };
 
-const SearchBar = ({
-  searchTerm,
-  changeSearchTerm,
-  sortBy,
-  changeSortBy,
-  filters,
-}: Props) => {
+const SearchBar = ({ searchTerm, changeSearchTerm, sortBy, changeSortBy, filters }: Props) => {
   return (
     <div className="relative flex items-center w-full">
       <Input
@@ -38,17 +32,10 @@ const SearchBar = ({
             <Filter className="w-5 h-5 duration-150 hover:text-purple text-custom-gray" />
           </div>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuRadioGroup
-            defaultValue={sortBy}
-            value={sortBy}
-            onValueChange={changeSortBy}
-          >
+        <DropdownMenuContent align="end" className="dark">
+          <DropdownMenuRadioGroup defaultValue={sortBy} value={sortBy} onValueChange={changeSortBy}>
             {Object.keys(filters).map((key, index) => (
-              <DropdownMenuRadioItem
-                key={key}
-                value={Object.values(filters)[index]}
-              >
+              <DropdownMenuRadioItem key={key} value={Object.values(filters)[index]}>
                 {key}
               </DropdownMenuRadioItem>
             ))}
