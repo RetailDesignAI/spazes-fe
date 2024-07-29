@@ -1,4 +1,4 @@
-import { IImage } from '@/pages/Project/project.types';
+import { IFeedback, IImage } from '@/pages/Project/project.types';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface IProjectState {
@@ -25,8 +25,11 @@ export const projectSlice = createSlice({
     changeSelectedImage: (state, { payload }) => {
       state.selectedImage = payload;
     },
+    changeFeedback: (state, { payload }: { payload: IFeedback }) => {
+      state.images[state.selectedImage].feedback = payload;
+    },
   },
 });
 
-export const { setImages, changeSelectedImage, addImages, resetProjectState } = projectSlice.actions;
+export const { setImages, changeSelectedImage, addImages, resetProjectState, changeFeedback } = projectSlice.actions;
 export default projectSlice.reducer;
