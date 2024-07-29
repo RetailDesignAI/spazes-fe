@@ -4,16 +4,18 @@ import storage from 'redux-persist/lib/storage';
 import persistReducer from 'redux-persist/es/persistReducer';
 import projectReducer from './project/projectSlice';
 import loadersReducer from './loaders/loadersSlice';
+import uiReducer from './ui/uiSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['project', 'loaders'],
+  blacklist: ['project', 'loaders', 'ui'],
 };
 
 const rootReducer = combineReducers({
   project: projectReducer,
   loaders: loadersReducer,
+  ui: uiReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
