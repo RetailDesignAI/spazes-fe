@@ -18,7 +18,6 @@ export interface IImage {
 
 export type DropdownProps = {
   value: string;
-  changeValue: (value: DropdownValues) => void;
 };
 
 export type EditPromptsProps = {
