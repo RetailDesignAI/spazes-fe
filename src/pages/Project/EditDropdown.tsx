@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { DropdownProps, DropdownValues, buttons } from './project.types';
 import { changeDropdownValue } from '@/providers/redux/project/projectSlice';
 import { useAppDispatch } from '@/hooks/useRedux';
+import { resetImageEditorState } from '@/providers/redux/project/imageEditorSlice';
 
 const EditDropdown = ({ value }: DropdownProps) => {
   const dispatch = useAppDispatch();
@@ -29,6 +30,7 @@ const EditDropdown = ({ value }: DropdownProps) => {
                   key={button.value}
                   value={button.value}
                   onSelect={(currentValue: string) => {
+                    dispatch(resetImageEditorState());
                     dispatch(changeDropdownValue(currentValue as DropdownValues));
                     setOpen(false);
                   }}

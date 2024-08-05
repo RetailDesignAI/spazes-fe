@@ -113,30 +113,32 @@ const CentreImage = () => {
           )}
         </AnimatePresence>
 
-        <div className="absolute bottom-2 right-2 flex z-50 gap-2">
-          <CustomTooltip
-            tooltipContent="Download Image"
-            triggerElement={
-              <p onClick={downloadImage} className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
-                <Download className="w-4 h-4" />
-              </p>
-            }
-          />
-          <CustomTooltip
-            tooltipContent="Show Prompt"
-            triggerElement={
-              <PromptCard
-                triggerElement={
-                  <p className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
-                    <Text className="w-4 h-4" />
-                  </p>
-                }
-                prompt={selectedImageObj?.prompt}
-                type={CardType.Popover}
-              />
-            }
-          />
-        </div>
+        {dropdownValue !== DropdownValues.Image && (
+          <div className="absolute bottom-2 right-2 flex z-50 gap-2">
+            <CustomTooltip
+              tooltipContent="Download Image"
+              triggerElement={
+                <p onClick={downloadImage} className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
+                  <Download className="w-4 h-4" />
+                </p>
+              }
+            />
+            <CustomTooltip
+              tooltipContent="Show Prompt"
+              triggerElement={
+                <PromptCard
+                  triggerElement={
+                    <p className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
+                      <Text className="w-4 h-4" />
+                    </p>
+                  }
+                  prompt={selectedImageObj?.prompt}
+                  type={CardType.Popover}
+                />
+              }
+            />
+          </div>
+        )}
         <MainImage setShowHeading={setShowHeading} />
       </motion.div>
       <EditorButtons />

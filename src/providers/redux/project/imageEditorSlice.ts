@@ -104,10 +104,7 @@ export const imageEditorSlice = createSlice({
       state.lines = payload;
     },
     toggleEditMode: (state, { payload }) => {
-      state = {
-        ...initialState,
-        isEditModeOn: payload,
-      };
+      state.isEditModeOn = payload;
     },
   },
 });
