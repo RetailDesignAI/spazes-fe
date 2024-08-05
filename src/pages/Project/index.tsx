@@ -13,7 +13,6 @@ import CustomImage from '@/components/ui/image';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import EditDropdown from './EditDropdown';
 import EditPrompts from './EditPrompts';
-import { DropdownValues } from './project.types';
 import { setImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
 import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
 import FullScreenLoader from '@/components/FullScreenLoader';
@@ -25,10 +24,9 @@ export default function Project() {
   const { id: projectId } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { images, selectedImage } = useAppSelector((state) => state.project);
+  const { images, selectedImage, dropdownValue } = useAppSelector((state) => state.project);
   const { fullPageLoader } = useAppSelector((state) => state.loaders);
   const [projectName, setProjectName] = useState<string>('');
-  const [dropdownValue, setDropdownValue] = useState(DropdownValues.Prompt);
   const [open, setOpen] = useState<boolean>(false);
   const [sameProject, setSameProject] = useState<boolean>(false);
   const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -84,10 +82,6 @@ export default function Project() {
 
     renameProject();
   }, [debouncedName, projectId, toast]);
-
-  const handleDropdownValue = (value: DropdownValues) => {
-    setDropdownValue(value);
-  };
 
   const changeSameProject = (value: boolean) => {
     setSameProject(value);
@@ -152,7 +146,7 @@ export default function Project() {
             </motion.div>
           </div>
           <div className="w-full lg:w-2/5">
-            <EditDropdown value={dropdownValue} changeValue={handleDropdownValue} />
+            <EditDropdown value={dropdownValue} />
             <EditPrompts dropdownValue={dropdownValue} />
           </div>
         </div>

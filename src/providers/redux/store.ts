@@ -3,17 +3,19 @@ import { FLUSH, PAUSE, PERSIST, PURGE, REGISTER, REHYDRATE, persistStore } from 
 import storage from 'redux-persist/lib/storage';
 import persistReducer from 'redux-persist/es/persistReducer';
 import projectReducer from './project/projectSlice';
+import imageEditorReducer from './project/imageEditorSlice';
 import loadersReducer from './loaders/loadersSlice';
 import uiReducer from './ui/uiSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['project', 'loaders', 'ui'],
+  blacklist: ['project', 'loaders', 'ui', 'imageEditor'],
 };
 
 const rootReducer = combineReducers({
   project: projectReducer,
+  imageEditor: imageEditorReducer,
   loaders: loadersReducer,
   ui: uiReducer,
 });
