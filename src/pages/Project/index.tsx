@@ -18,6 +18,7 @@ import { setFullLoader } from '@/providers/redux/loaders/loadersSlice';
 import FullScreenLoader from '@/components/FullScreenLoader';
 import useDebouncedValue from '@/hooks/useDebounceValue';
 import CentreImage from './CentreImage';
+import { resetImageEditorState } from '@/providers/redux/project/imageEditorSlice';
 
 export default function Project() {
   const { toast } = useToast();
@@ -112,7 +113,10 @@ export default function Project() {
                     key={image.prompt}
                     ref={(el) => (imageRefs.current[index] = el)}
                     className="relative flex-shrink-0 cursor-pointer group bg-black/50 w-[100px] h-[56.25px] rounded-lg"
-                    onClick={() => dispatch(changeSelectedImage(index))}
+                    onClick={() => {
+                      dispatch(changeSelectedImage(index));
+                      dispatch(resetImageEditorState());
+                    }}
                   >
                     <CustomImage alt="Thumbnail 1" className="rounded-lg object-cover w-full h-full" src={image?.url} />
                     {index === selectedImage && (

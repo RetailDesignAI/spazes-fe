@@ -67,7 +67,7 @@ export const imageEditorSlice = createSlice({
   name: 'imageEditor',
   initialState,
   reducers: {
-    resetImageEditorSlice: () => initialState,
+    resetImageEditorState: () => initialState,
     addShape: (state, { payload }) => {
       const id = uuidv4();
       if (payload === EditorShapes.Rectangle) {
@@ -104,11 +104,14 @@ export const imageEditorSlice = createSlice({
       state.lines = payload;
     },
     toggleEditMode: (state, { payload }) => {
-      state.isEditModeOn = payload;
+      state = {
+        ...initialState,
+        isEditModeOn: payload,
+      };
     },
   },
 });
 
-export const { resetImageEditorSlice, addShape, setShapes, removeShape, setLines, toggleEditMode } =
+export const { resetImageEditorState, addShape, setShapes, removeShape, setLines, toggleEditMode } =
   imageEditorSlice.actions;
 export default imageEditorSlice.reducer;
