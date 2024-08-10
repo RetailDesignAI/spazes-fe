@@ -5,8 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Command, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownProps, DropdownValues, buttons } from './project.types';
+import { changeDropdownValue } from '@/providers/redux/project/projectSlice';
+import { useAppDispatch } from '@/hooks/useRedux';
+import { resetImageEditorState } from '@/providers/redux/project/imageEditorSlice';
 
-const EditDropdown = ({ value, changeValue }: DropdownProps) => {
+const EditDropdown = ({ value }: DropdownProps) => {
+  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
 
   return (
@@ -26,7 +30,8 @@ const EditDropdown = ({ value, changeValue }: DropdownProps) => {
                   key={button.value}
                   value={button.value}
                   onSelect={(currentValue: string) => {
-                    changeValue(currentValue as DropdownValues);
+                    dispatch(resetImageEditorState());
+                    dispatch(changeDropdownValue(currentValue as DropdownValues));
                     setOpen(false);
                   }}
                 >
