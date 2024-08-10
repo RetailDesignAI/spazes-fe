@@ -1,4 +1,4 @@
-import { DropdownValues, IFeedback, IImage } from '@/pages/Project/project.types';
+import { DropdownValues, IImage } from '@/pages/Project/project.types';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface IProjectState {
@@ -27,15 +27,11 @@ export const projectSlice = createSlice({
     changeSelectedImage: (state, { payload }) => {
       state.selectedImage = payload;
     },
-    changeFeedback: (state, { payload }: { payload: IFeedback }) => {
-      state.images[state.selectedImage].feedback = payload;
-    },
     changeDropdownValue: (state, { payload }: { payload: DropdownValues }) => {
       state.dropdownValue = payload;
     },
   },
 });
 
-export const { setImages, changeSelectedImage, addImages, resetProjectState, changeFeedback, changeDropdownValue } =
-  projectSlice.actions;
+export const { setImages, changeSelectedImage, addImages, resetProjectState, changeDropdownValue } = projectSlice.actions;
 export default projectSlice.reducer;

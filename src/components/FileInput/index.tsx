@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { X } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { fadeAnimation } from '@/lib/animations';
 import UploadIcon from '../ui/uploadicon';
 
@@ -33,41 +33,40 @@ const FileInput = ({ handleFileChange }: Props) => {
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        {...fadeAnimation}
-        className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mb-2"
-      >
-        {image ? (
-          <div className="flex p-5 space-x-4 text-white border-2 border-gray-700 border-dashed rounded-lg itms-center justify-startr">
-            <div className="relative">
-              <button onClick={removeImage} className="absolute -top-2 -right-2 p-1 bg-[#7D4AEA] rounded-full">
-                <X className="w-3 h-3" />
-              </button>
-              <img className="object-cover w-[80px] h-[80px]" src={image} alt="Uploaded Image" />
-            </div>
+    <motion.div
+      {...fadeAnimation}
+      transition={{ duration: 0.15 }}
+      className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mb-2"
+    >
+      {image ? (
+        <div className="flex p-5 space-x-4 text-white border-2 border-gray-700 border-dashed rounded-lg itms-center justify-startr">
+          <div className="relative">
+            <button onClick={removeImage} className="absolute -top-2 -right-2 p-1 bg-[#7D4AEA] rounded-full">
+              <X className="w-3 h-3" />
+            </button>
+            <img className="object-cover w-[80px] h-[80px]" src={image} alt="Uploaded Image" />
           </div>
-        ) : (
-          <div
-            className="flex items-center justify-center space-x-4 text-white border-2 border-gray-700 border-dashed rounded-lg cursor-pointer p-11"
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <>
-                <UploadIcon className="w-8 h-8" />
-                <span className="text-lg">Drop the file here</span>
-              </>
-            ) : (
-              <>
-                <UploadIcon className="w-8 h-8" />
-                <span className="text-lg">Drag and drop or upload an image</span>
-              </>
-            )}
-          </div>
-        )}
-      </motion.div>
-    </AnimatePresence>
+        </div>
+      ) : (
+        <div
+          className="flex items-center justify-center space-x-4 text-white border-2 border-gray-700 border-dashed rounded-lg cursor-pointer p-11"
+          {...getRootProps()}
+        >
+          <input {...getInputProps()} />
+          {isDragActive ? (
+            <>
+              <UploadIcon className="w-8 h-8" />
+              <span className="text-lg">Drop the file here</span>
+            </>
+          ) : (
+            <>
+              <UploadIcon className="w-8 h-8" />
+              <span className="text-lg">Drag and drop or upload an image</span>
+            </>
+          )}
+        </div>
+      )}
+    </motion.div>
   );
 };
 
