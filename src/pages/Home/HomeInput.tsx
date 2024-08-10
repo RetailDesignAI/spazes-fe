@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
 import api from '@/api/axiosConfig';
+import EditDropdown from '../Project/EditDropdown';
 
 const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProps) => {
   const PROMPT_SIZE_LIMIT: number = 500;
@@ -70,18 +71,28 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
 
   return (
     <div key="1" className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4">
-      {uploadImage && <FileInput handleFileChange={handleFileChange} />}
+      <AnimatePresence>{uploadImage && <FileInput handleFileChange={handleFileChange} />}</AnimatePresence>
       <motion.div
         {...fadeAnimation}
         className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white"
       >
         <div className="flex items-center justify-between w-full">
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Type your prompt here..."
-            className="w-full pr-4 font-medium bg-transparent outline-none resize-none text-l"
-          ></textarea>
+          <div className="flex items-center flex-1">
+            <textarea
+              value={prompt}
+              maxLength={500}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Type your prompt here..."
+              className="w-full pr-4 font-medium bg-transparent outline-none resize-none text-l"
+            ></textarea>
+            {/* <textarea
+              value={prompt}
+              maxLength={500}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Type your prompt here..."
+              className="w-full px-4 font-medium bg-transparent outline-none resize-none text-l border-l border-[#9b9b9b35]"
+            ></textarea> */}
+          </div>
           <div className="flex items-center space-x-2">
             <CustomTooltipButton
               onClick={generatePrompts}
@@ -98,7 +109,7 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
           </div>
         </div>
         <div className="flex items-center justify-between w-full">
-          <div className="relative">
+          <div className="relative flex gap-2 items-center">
             <Button
               onClick={() => setUploadImage((prev) => !prev)}
               className="flex items-center space-x-2 rounded-lg bg-[#313338] p-3 text-sm"
@@ -106,6 +117,7 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
               <UploadIcon className="h-4 w-4 text-[#B1B1B3]" />
               <span>Upload</span>
             </Button>
+            {uploadImage && <EditDropdown />}
           </div>
           <p className="text-[#B1B1B3] hover:text-white">
             {prompt.length}/{PROMPT_SIZE_LIMIT}

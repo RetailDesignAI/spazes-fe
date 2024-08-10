@@ -16,14 +16,6 @@ export interface IImage {
   feedback?: IFeedback;
 }
 
-export type DropdownProps = {
-  value: string;
-};
-
-export type EditPromptsProps = {
-  dropdownValue: DropdownValues;
-};
-
 export const buttons = [
   {
     value: DropdownValues.Prompt,

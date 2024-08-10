@@ -2,17 +2,17 @@ import { FormEvent, useState } from 'react';
 import api from '@/api/axiosConfig';
 import { useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { DropdownValues, EditPromptsProps } from './project.types';
+import { DropdownValues } from './project.types';
 import { useToast } from '@/components/ui/use-toast';
 import Spinner from '@/components/ui/spinner';
 import { addImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { resetImageEditorState, selectShape } from '@/providers/redux/project/imageEditorSlice';
 
-const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
+const EditPrompts = () => {
   const { toast } = useToast();
   const dispatch = useAppDispatch();
-  const { images, selectedImage } = useAppSelector((state) => state.project);
+  const { images, selectedImage, dropdownValue } = useAppSelector((state) => state.project);
   const { id: projectId } = useParams<{ id: string }>();
   const [searchPrompt, setSearchPrompt] = useState<string>('');
   const [prompt, setPrompt] = useState<string>('');
