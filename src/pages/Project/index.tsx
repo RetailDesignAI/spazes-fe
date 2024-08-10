@@ -25,7 +25,7 @@ export default function Project() {
   const { id: projectId } = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const { images, selectedImage, dropdownValue } = useAppSelector((state) => state.project);
+  const { images, selectedImage } = useAppSelector((state) => state.project);
   const { fullPageLoader } = useAppSelector((state) => state.loaders);
   const [projectName, setProjectName] = useState<string>('');
   const [open, setOpen] = useState<boolean>(false);
@@ -150,8 +150,8 @@ export default function Project() {
             </motion.div>
           </div>
           <div className="w-full lg:w-2/5">
-            <EditDropdown value={dropdownValue} />
-            <EditPrompts dropdownValue={dropdownValue} />
+            <EditDropdown />
+            <EditPrompts />
           </div>
         </div>
       </div>
