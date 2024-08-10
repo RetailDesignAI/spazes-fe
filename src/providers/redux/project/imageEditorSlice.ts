@@ -45,6 +45,7 @@ export interface ICircle extends IShape {
 }
 
 export interface ILine {
+  id: string;
   tool: 'pen';
   points: number[];
 }
@@ -54,6 +55,7 @@ export interface IImageEditorState {
   circles: ICircle[];
   lines: ILine[];
   isEditModeOn: boolean;
+  selectedId: string;
 }
 
 const initialState: IImageEditorState = {
@@ -61,6 +63,7 @@ const initialState: IImageEditorState = {
   circles: [],
   lines: [],
   isEditModeOn: false,
+  selectedId: '',
 };
 
 export const imageEditorSlice = createSlice({
@@ -106,9 +109,12 @@ export const imageEditorSlice = createSlice({
     toggleEditMode: (state, { payload }) => {
       state.isEditModeOn = payload;
     },
+    selectShape: (state, { payload }) => {
+      state.selectedId = payload;
+    },
   },
 });
 
-export const { resetImageEditorState, addShape, setShapes, removeShape, setLines, toggleEditMode } =
+export const { resetImageEditorState, addShape, setShapes, removeShape, setLines, toggleEditMode, selectShape } =
   imageEditorSlice.actions;
 export default imageEditorSlice.reducer;
