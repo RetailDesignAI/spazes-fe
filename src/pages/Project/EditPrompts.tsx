@@ -7,6 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 import Spinner from '@/components/ui/spinner';
 import { addImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { resetImageEditorState, selectShape } from '@/providers/redux/project/imageEditorSlice';
 
 const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
   const { toast } = useToast();
@@ -18,12 +19,13 @@ const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    dispatch(selectShape(''));
     e.preventDefault();
     try {
       setIsLoading(true);
       if (dropdownValue === DropdownValues.Prompt) {
         const res = await api.post('/edit/search-replace', {
-          url: images[selectedImage].url,
+          imageId: images[selectedImage]._id,
           searchPrompt,
           replacePrompt: prompt,
           projectId,
@@ -33,15 +35,30 @@ const EditPrompts = ({ dropdownValue }: EditPromptsProps) => {
         dispatch(changeSelectedImage(0));
       } else if (dropdownValue === DropdownValues.Structure) {
         const res = await api.post('/edit/structure', {
-          url: images[selectedImage].url,
+          imageId: images[selectedImage]._id,
           prompt,
           projectId,
         });
         const image = res.data.image;
         dispatch(addImages([image]));
         dispatch(changeSelectedImage(0));
+      } else if (dropdownValue === DropdownValues.Image) {
+        const canvasElement = document.querySelector('canvas') as HTMLCanvasElement;
+        const maskUrl = canvasElement.toDataURL('image/png');
+        const res = await api.post('/edit/image', {
+          imageId: images[selectedImage]._id,
+          maskUrl: maskUrl,
+          prompt,
+          projectId,
+        });
+        const image = res.data.image;
+        dispatch(addImages([image]));
+        dispatch(changeSelectedImage(0));
+        dispatch(resetImageEditorState());
       }
     } catch (error: any) {
+      console.log(error);
+
       toast({
         title: 'Uh oh! Something went wrong.',
         description: error.response.data.message,

@@ -56,6 +56,18 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
     setFile(file);
   };
 
+  const generateImages = async () => {
+    if (prompt === '') {
+      toast({
+        title: 'Invalid prompt',
+        description: 'Please enter a valid prompt',
+        variant: 'destructive',
+      });
+      return;
+    }
+    handleImageGeneration([prompt], Loading.SinglePrompt);
+  };
+
   return (
     <div key="1" className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4">
       {uploadImage && <FileInput handleFileChange={handleFileChange} />}
@@ -77,7 +89,7 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
               tooltipContent="Generate Prompts"
             />
             <CustomTooltipButton
-              onClick={() => handleImageGeneration([prompt], Loading.SinglePrompt)}
+              onClick={generateImages}
               buttonContent={
                 loading === Loading.SinglePrompt ? <Spinner className="fill-white" /> : <Send className="w-4 h-4" />
               }
