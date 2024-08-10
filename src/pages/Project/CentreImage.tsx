@@ -2,19 +2,24 @@ import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import MainImage from './MainImage';
 import { Download, Text, ThumbsDown, ThumbsUp } from 'lucide-react';
-import { changeFeedback } from '@/providers/redux/project/projectSlice';
 import CustomTooltip from '@/components/ui/customTooltip';
 import PromptCard from '@/components/PromptCard';
 import { CardType } from '@/components/PromptCard/promptCards.types';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { useAppSelector } from '@/hooks/useRedux';
 import { fadeAnimation } from '@/lib/animations';
-import { DropdownValues } from './project.types';
+import { DropdownValues, FeedbackTypes } from './project.types';
 import EditorButtons from './EditorButtons';
+import api from '@/api/axiosConfig';
+import { useToast } from '@/components/ui/use-toast';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import CommentModal from './CommentModal';
 
 const CentreImage = () => {
-  const dispatch = useAppDispatch();
+  const { toast } = useToast();
   const { images, selectedImage, dropdownValue } = useAppSelector((state) => state.project);
   const [showHeading, setShowHeading] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<FeedbackTypes>(FeedbackTypes.NONE);
 
   const selectedImageObj = useMemo(() => {
     return images[selectedImage] || null;
@@ -25,6 +30,30 @@ const CentreImage = () => {
     link.href = selectedImageObj?.url;
     link.download = 'image.webp';
     link.click();
+  };
+
+  const handleLike = async () => {
+    try {
+      await api.post('/feedback', {
+        imageId: selectedImageObj?._id,
+        isLiked: true,
+      });
+      setFeedback(FeedbackTypes.LIKE);
+      toast({
+        title: 'Thank you for your feedback!',
+        variant: 'default',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: 'Please try again later',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDialogChange = (value: boolean) => {
+    setOpen(value);
   };
 
   return (
@@ -50,63 +79,40 @@ const CentreImage = () => {
                   <CustomTooltip
                     tooltipContent="Like"
                     triggerElement={
-                      selectedImageObj.feedback?.isGiven ? (
-                        selectedImageObj.feedback.isLiked ? (
-                          <ThumbsUp
-                            onClick={() => dispatch(changeFeedback({ isGiven: false }))}
-                            fill="#9B59B6"
-                            strokeWidth={1}
-                            className="w-4 h-4 duration-150 cursor-pointer stroke-[#9B59B6]"
-                          />
-                        ) : (
-                          <ThumbsUp
-                            onClick={() => dispatch(changeFeedback({ isGiven: true, isLiked: true }))}
-                            fill="transparent"
-                            strokeWidth={2}
-                            className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                          />
-                        )
-                      ) : (
-                        <ThumbsUp
-                          onClick={() => dispatch(changeFeedback({ isGiven: true, isLiked: true }))}
-                          fill="transparent"
-                          strokeWidth={2}
-                          className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                        />
-                      )
+                      <ThumbsUp
+                        onClick={handleLike}
+                        fill={feedback !== FeedbackTypes.LIKE ? 'transparent' : '#9b59b6'}
+                        strokeWidth={2}
+                        className={`w-4 h-4 duration-150 cursor-pointer hover:text-white ${
+                          feedback !== FeedbackTypes.LIKE ? 'text-custom-gray' : '#9b59b6 stroke-[#9b59b6]'
+                        }`}
+                      />
                     }
                   />
                 </span>
                 <span>
-                  <CustomTooltip
-                    tooltipContent="Dislike"
-                    triggerElement={
-                      selectedImageObj.feedback?.isGiven ? (
-                        !selectedImageObj.feedback.isLiked ? (
+                  <Dialog open={open} onOpenChange={handleDialogChange}>
+                    <DialogTrigger>
+                      <CustomTooltip
+                        tooltipContent="Dislike"
+                        triggerElement={
                           <ThumbsDown
-                            onClick={() => dispatch(changeFeedback({ isGiven: false }))}
-                            fill="#eb4b4b"
-                            strokeWidth={1}
-                            className="w-4 h-4 duration-150 cursor-pointer stroke-[#eb4b4b]"
-                          />
-                        ) : (
-                          <ThumbsDown
-                            onClick={() => dispatch(changeFeedback({ isGiven: true, isLiked: false }))}
-                            fill="transparent"
+                            onClick={() => setOpen(true)}
+                            fill={feedback !== FeedbackTypes.DISLIKE ? 'transparent' : '#eb4b4b'}
                             strokeWidth={2}
-                            className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
+                            className={`w-4 h-4 duration-150 cursor-pointer hover:text-white ${
+                              feedback !== FeedbackTypes.DISLIKE ? 'text-custom-gray' : '#eb4b4b stroke-[#eb4b4b]'
+                            }`}
                           />
-                        )
-                      ) : (
-                        <ThumbsDown
-                          onClick={() => dispatch(changeFeedback({ isGiven: true, isLiked: false }))}
-                          fill="transparent"
-                          strokeWidth={2}
-                          className="w-4 h-4 duration-150 cursor-pointer text-custom-gray hover:text-white"
-                        />
-                      )
-                    }
-                  />
+                        }
+                      />
+                    </DialogTrigger>
+                    <CommentModal
+                      handleDialogChange={handleDialogChange}
+                      handleFeedbackChange={setFeedback}
+                      imageId={selectedImageObj?._id}
+                    />
+                  </Dialog>
                 </span>
               </p>
             </motion.div>

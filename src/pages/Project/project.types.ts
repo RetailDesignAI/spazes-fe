@@ -4,16 +4,10 @@ export enum DropdownValues {
   Structure = 'editByStructure',
 }
 
-export interface IFeedback {
-  isGiven: boolean;
-  isLiked?: boolean;
-}
-
 export interface IImage {
   url: string;
   _id: string;
   prompt: string;
-  feedback?: IFeedback;
 }
 
 export const buttons = [
@@ -30,3 +24,9 @@ export const buttons = [
     label: 'Edit by Structure',
   },
 ];
+
+export enum FeedbackTypes {
+  LIKE = 'like',
+  DISLIKE = 'dislike',
+  NONE = 'none',
+}
