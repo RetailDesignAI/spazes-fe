@@ -1,11 +1,11 @@
+import { useCallback, useEffect, useRef } from 'react';
+import useImage from 'use-image';
+import { v4 as uuidv4 } from 'uuid';
+import { Stage, Layer, Image, Line } from 'react-konva';
 import CircleShape from '@/components/ImageEditor/Circle';
-import LineShape from '@/components/ImageEditor/Line';
 import Rectangle from '@/components/ImageEditor/Rectangle';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { EditorShapes, removeShape, setLines, setShapes } from '@/providers/redux/project/imageEditorSlice';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Stage, Layer, Image } from 'react-konva';
-import useImage from 'use-image';
+import { EditorShapes, removeShape, selectShape, setLines, setShapes } from '@/providers/redux/project/imageEditorSlice';
 
 type ImageEditorProps = {
   url: string;
@@ -14,22 +14,12 @@ type ImageEditorProps = {
   height: number;
 };
 
-// function downloadURI(uri: string, name: string) {
-//   const link = document.createElement('a');
-//   link.download = name;
-//   link.href = uri;
-//   document.body.appendChild(link);
-//   link.click();
-//   document.body.removeChild(link);
-// }
-
 const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
   const [image] = useImage(url, 'anonymous');
   const dispatch = useAppDispatch();
-  const [selectedId, selectShape] = useState('');
   const stageRef = useRef<any>(null);
   const isDrawing = useRef<boolean>(false);
-  const { rectangles, circles, lines, isEditModeOn } = useAppSelector((state) => state.imageEditor);
+  const { rectangles, circles, lines, isEditModeOn, selectedId } = useAppSelector((state) => state.imageEditor);
 
   const handleKeyDown = useCallback(
     (event: KeyboardEvent) => {
@@ -47,20 +37,43 @@ const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
     };
   }, [handleKeyDown]);
 
+  useEffect(() => {
+    const handleOutsideClick = (e: any) => {
+      const stage = stageRef.current?.getStage();
+      const clickedOnStage = stage?.content?.contains(e.target as Node);
+
+      if (!clickedOnStage) {
+        dispatch(selectShape(''));
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [dispatch]);
+
   const checkDeselect = (e: any) => {
-    // deselect when clicked on empty area
-    const clickedOnEmpty = e.target === e.target.getStage();
-    handleMouseDown(e);
-    if (clickedOnEmpty) {
-      selectShape('');
+    const elementClicked = e.target?.attrs;
+    const isDraggable = elementClicked?.draggable;
+    const elementClickedType = elementClicked?.id?.split('_')[0];
+
+    if ((elementClickedType !== EditorShapes.Rectangle || elementClickedType !== EditorShapes.Circle) && !isDraggable) {
+      dispatch(selectShape(''));
     }
+    const clickedOnEmpty = e.target === e.target.getStage();
+    if (clickedOnEmpty) {
+      dispatch(selectShape(''));
+    }
+    handleMouseDown(e);
   };
 
   const handleMouseDown = (e: any) => {
     if (isEditModeOn) {
       isDrawing.current = true;
       const pos = e.target.getStage().getPointerPosition();
-      dispatch(setLines([...lines, { tool: 'pen', points: [pos.x, pos.y] }]));
+      dispatch(setLines([...lines, { id: uuidv4(), tool: 'pen', points: [pos.x, pos.y] }]));
     }
   };
 
@@ -93,22 +106,12 @@ const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
     isDrawing.current = false;
   };
 
-  //   const handleExport = async () => {
-  //     const uri = stageRef.current.toDataURL();
-  //     console.log(uri);
-  //     // we also can save uri as file
-  //     // but in the demo on Konva website it will not work
-  //     // because of iframe restrictions
-  //     // but feel free to use it in your apps:
-  //     downloadURI(uri, 'stage.png');
-  //   };
-
   return (
     <>
-      {/* <button onClick={handleExport}>Download</button> */}
       <Stage
         ref={stageRef}
         className={`${className} ${isEditModeOn && 'cursor-crosshair'}`}
+        id="stage-image-editor"
         width={width}
         height={height}
         onMouseDown={checkDeselect}
@@ -125,7 +128,7 @@ const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
                 shapeProps={rect}
                 isSelected={rect?.id === selectedId}
                 onSelect={() => {
-                  selectShape(rect?.id as string);
+                  dispatch(selectShape(rect?.id as string));
                 }}
                 onChange={(newAttrs) => {
                   const rects = rectangles.slice();
@@ -142,7 +145,7 @@ const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
                 shapeProps={circle}
                 isSelected={circle?.id === selectedId}
                 onSelect={() => {
-                  selectShape(circle?.id as string);
+                  dispatch(selectShape(circle?.id as string));
                 }}
                 onChange={(newAttrs) => {
                   const circs = circles.slice();
@@ -152,8 +155,21 @@ const ImageEditor = ({ url, width, height, className }: ImageEditorProps) => {
               />
             );
           })}
-          {lines?.map((line, i) => {
-            return <LineShape key={i} shapeProps={line} />;
+          {lines?.map((line) => {
+            return (
+              <Line
+                key={line?.id}
+                points={line.points}
+                stroke={selectedId === line?.id ? '#000' : '#fff'}
+                fill="white"
+                strokeWidth={1}
+                tension={1}
+                closed={true}
+                lineCap="round"
+                lineJoin="round"
+                globalCompositeOperation={'source-over'}
+              />
+            );
           })}
         </Layer>
       </Stage>
