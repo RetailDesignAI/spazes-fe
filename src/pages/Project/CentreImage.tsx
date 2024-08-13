@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import MainImage from './MainImage';
-import { Download, Text, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Download, Text, ThumbsDown, ThumbsUp, Trash } from 'lucide-react';
 import CustomTooltip from '@/components/ui/customTooltip';
 import PromptCard from '@/components/PromptCard';
 import { CardType } from '@/components/PromptCard/promptCards.types';
-import { useAppSelector } from '@/hooks/useRedux';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { fadeAnimation } from '@/lib/animations';
 import { DropdownValues, FeedbackTypes } from './project.types';
 import EditorButtons from './EditorButtons';
@@ -13,9 +13,12 @@ import api from '@/api/axiosConfig';
 import { useToast } from '@/components/ui/use-toast';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import CommentModal from './CommentModal';
+import ConfirmationAlert from '@/components/Alerts/ConfirmationAlert';
+import { removeImage } from '@/providers/redux/project/projectSlice';
 
 const CentreImage = () => {
   const { toast } = useToast();
+  const dispatch = useAppDispatch();
   const { images, selectedImage, dropdownValue } = useAppSelector((state) => state.project);
   const [showHeading, setShowHeading] = useState<boolean>(false);
   const [open, setOpen] = useState<boolean>(false);
@@ -54,6 +57,23 @@ const CentreImage = () => {
 
   const handleDialogChange = (value: boolean) => {
     setOpen(value);
+  };
+
+  const handleDeleteImage = async () => {
+    try {
+      await api.put(`/images/delete/${selectedImageObj?._id}`);
+      toast({
+        title: 'Image deleted successfully!',
+        variant: 'default',
+      });
+      dispatch(removeImage(selectedImageObj._id));
+    } catch (error: any) {
+      toast({
+        title: 'Uh oh! Something went wrong.',
+        description: error.response.data.message,
+        variant: 'destructive',
+      });
+    }
   };
 
   return (
@@ -140,6 +160,23 @@ const CentreImage = () => {
                   }
                   prompt={selectedImageObj?.prompt}
                   type={CardType.Popover}
+                />
+              }
+            />
+            <CustomTooltip
+              tooltipContent="Delete Image"
+              triggerElement={
+                <ConfirmationAlert
+                  triggerElement={
+                    <p className="p-2 bg-[#000000d0] rounded-full cursor-pointer">
+                      <Trash className="w-4 h-4" />
+                    </p>
+                  }
+                  acceptButtonText="Delete"
+                  rejectButtonText="Cancel"
+                  onAccept={handleDeleteImage}
+                  title="Are you sure you want to delete this image?"
+                  description="This action cannot be undone. This will permanently delete your image."
                 />
               }
             />
