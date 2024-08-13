@@ -8,15 +8,13 @@ import CustomTooltipButton from '@/components/ui/customTooltipButton';
 import Spinner from '@/components/ui/spinner';
 import { Send, Text } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import UploadIcon from '@/components/ui/uploadicon';
 import PromptsList from '@/components/PromptsList';
 import api from '@/api/axiosConfig';
-import EditDropdown from '../Project/EditDropdown';
+import SectionSeparator from '@/components/ui/sectionSeparator';
 
 const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProps) => {
   const PROMPT_SIZE_LIMIT: number = 500;
   const { toast } = useToast();
-  const [uploadImage, setUploadImage] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
   const [prompt, setPrompt] = useState<string>('');
   const [generatedPrompts, setGeneratedPrompts] = useState<string[]>([]);
@@ -71,10 +69,9 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
 
   return (
     <div key="1" className="flex flex-col h-full w-full items-center justify-center bg-[#121213] p-4">
-      <AnimatePresence>{uploadImage && <FileInput handleFileChange={handleFileChange} />}</AnimatePresence>
       <motion.div
         {...fadeAnimation}
-        className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white"
+        className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mb-2"
       >
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center flex-1">
@@ -85,13 +82,6 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
               placeholder="Type your prompt here..."
               className="w-full pr-4 font-medium bg-transparent outline-none resize-none text-l"
             ></textarea>
-            {/* <textarea
-              value={prompt}
-              maxLength={500}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Type your prompt here..."
-              className="w-full px-4 font-medium bg-transparent outline-none resize-none text-l border-l border-[#9b9b9b35]"
-            ></textarea> */}
           </div>
           <div className="flex items-center space-x-2">
             <CustomTooltipButton
@@ -108,23 +98,13 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
             />
           </div>
         </div>
-        <div className="flex items-center justify-between w-full">
-          <div className="relative flex gap-2 items-center">
-            <Button
-              onClick={() => setUploadImage((prev) => !prev)}
-              className="flex items-center space-x-2 rounded-lg bg-[#313338] p-3 text-sm"
-            >
-              <UploadIcon className="h-4 w-4 text-[#B1B1B3]" />
-              <span>Upload</span>
-            </Button>
-            {uploadImage && <EditDropdown />}
-          </div>
-          <p className="text-[#B1B1B3] hover:text-white">
+        <div className="flex items-center justify-end w-full">
+          <p className="text-[#B1B1B3] text-sm hover:text-white">
             {prompt.length}/{PROMPT_SIZE_LIMIT}
           </p>
         </div>
       </motion.div>
-      {generatedPrompts.length > 0 && (
+      {generatedPrompts.length > 0 ? (
         <AnimatePresence>
           <motion.div {...fadeAnimation} className="flex flex-col w-full max-w-4xl p-6 space-y-6 text-white rounded-lg">
             <PromptsList
@@ -139,6 +119,13 @@ const HomeInput = ({ handleImageGeneration, loading, setLoading }: HomeInputProp
               {loading === Loading.ImagineAll ? <Spinner className="fill-white" /> : 'Imagine All'}
             </Button>
           </motion.div>
+        </AnimatePresence>
+      ) : (
+        <AnimatePresence>
+          <div className="mx-auto max-w-[400px] space-y-6">
+            <SectionSeparator text="OR" />
+          </div>
+          <FileInput handleFileChange={handleFileChange} />
         </AnimatePresence>
       )}
     </div>
