@@ -35,9 +35,18 @@ const Login = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
           <Label htmlFor="email">Email</Label>
-          <Input id="email" className="mt-2" placeholder="Enter your email" {...register('email', { required: true })} />
+          <Input
+            id="email"
+            className="mt-2"
+            placeholder="Enter your email"
+            {...register('email', {
+              required: true,
+              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            })}
+          />
           <AnimatePresence>
             {errors.email?.type === 'required' && <FormErrorMessage text="Email is required" />}
+            {errors.email?.type === 'pattern' && <FormErrorMessage text="Invalid email address" />}
           </AnimatePresence>
         </div>
         <Button type="submit" className="w-full bg-custom-secondary">
