@@ -36,7 +36,7 @@ const FileInput = ({ handleFileChange }: Props) => {
     <motion.div
       {...fadeAnimation}
       transition={{ duration: 0.15 }}
-      className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mb-2"
+      className="flex w-full max-w-4xl flex-col space-y-6 rounded-lg bg-[#1C1E21] p-4 text-white mt-2"
     >
       {image ? (
         <div className="flex p-5 space-x-4 text-white border-2 border-gray-700 border-dashed rounded-lg itms-center justify-startr">

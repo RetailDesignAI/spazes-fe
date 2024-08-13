@@ -49,7 +49,10 @@ const CommentModal = ({ handleFeedbackChange, handleDialogChange, imageId }: Com
           onChange={(e) => setComment(e.target.value)}
           className="w-full bg-transparent border-[0.05em] h-24 border-transparent p-2 text-sm duration-300 border-custom-gray outline-none my-2 resize-none rounded-md"
         ></textarea>
-        <Button className="bg-[#7D4AEA]" onClick={handleDislike}>
+        <Button
+          className="bg-gradient-to-r from-[#7D4AEA] to-[#9B59B6] shadow-lg shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50"
+          onClick={handleDislike}
+        >
           Submit
         </Button>
       </DialogDescription>
