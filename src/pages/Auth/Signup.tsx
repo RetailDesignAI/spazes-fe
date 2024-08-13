@@ -3,12 +3,12 @@ import FormErrorMessage from '@/components/ui/formErrorMessage';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { AppRoutes } from '@/lib/constants/routes';
-import { useGoogleLogin } from '@react-oauth/google';
 import { AnimatePresence } from 'framer-motion';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 import { fadeAnimation } from '@/lib/animations';
 import { motion } from 'framer-motion';
+import GoogleLoginBtn from './GoogleLoginBtn';
 
 interface IFormInput {
   name: string;
@@ -22,10 +22,6 @@ const Signup = () => {
     formState: { errors },
   } = useForm<IFormInput>();
   const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
-
-  const googleLogin = useGoogleLogin({
-    onSuccess: (tokenResponse) => console.log(tokenResponse),
-  });
 
   return (
     <motion.div className="w-full max-w-[400px] p-6 space-y-6 bg-card rounded-xl shadow-lg dark auth" {...fadeAnimation}>
@@ -72,10 +68,7 @@ const Signup = () => {
         <span className="mx-4 bg-background px-2 text-muted-foreground text-[12px]">OR</span>
         <div className="flex-1 border-t border-muted" />
       </div>
-      <Button onClick={() => googleLogin()} className="w-full bg-custom-secondary flex justify-center items-center gap-3">
-        <img src="/google.svg" alt="Google Icon" className="w-4" />
-        Sign in with Google
-      </Button>
+      <GoogleLoginBtn />
     </motion.div>
   );
 };
