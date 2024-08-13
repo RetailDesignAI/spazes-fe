@@ -24,6 +24,9 @@ export const projectSlice = createSlice({
     addImages: (state, { payload }) => {
       state.images.unshift(...payload);
     },
+    removeImage: (state, { payload }) => {
+      state.images = state.images.filter((image) => image._id !== payload);
+    },
     changeSelectedImage: (state, { payload }) => {
       state.selectedImage = payload;
     },
@@ -33,5 +36,6 @@ export const projectSlice = createSlice({
   },
 });
 
-export const { setImages, changeSelectedImage, addImages, resetProjectState, changeDropdownValue } = projectSlice.actions;
+export const { setImages, changeSelectedImage, addImages, resetProjectState, changeDropdownValue, removeImage } =
+  projectSlice.actions;
 export default projectSlice.reducer;
