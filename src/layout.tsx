@@ -2,11 +2,10 @@ import { Navigate, Outlet } from 'react-router-dom';
 import SidebarControl from './components/Sidebar';
 import { useAppSelector } from './hooks/useRedux';
 import { AppRoutes } from './lib/constants/routes';
-
-const isAuthed = true;
+import useAuth from './hooks/useAuth';
 
 const AppLayout = () => {
-  // const { isAuthed, handleAuth } = useRequireAuth();
+  const isAuthed = useAuth();
   const { sidebarWidth } = useAppSelector((state) => state.ui);
 
   return isAuthed ? (
