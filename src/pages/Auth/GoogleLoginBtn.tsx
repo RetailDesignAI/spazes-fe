@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { useToast } from '@/components/ui/use-toast';
-import { LoginSources } from './auth.types';
-import api from '@/api/axiosConfig';
 import { GoogleCredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { useAppDispatch } from '@/hooks/useRedux';
+import { useNavigate } from 'react-router-dom';
+import { AppRoutes } from '@/lib/constants/routes';
+import { setUser } from '@/providers/redux/auth/userSlice';
+import api from '@/api/axiosConfig';
 
 const GoogleLoginBtn = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const parentRef = useRef<HTMLDivElement>(null);
   const [buttonWidth, setButtonWidth] = useState(0);
 
@@ -26,13 +31,12 @@ const GoogleLoginBtn = () => {
   const googleLoginSuccess = async (credentialResponse: GoogleCredentialResponse) => {
     const googleAccessToken = credentialResponse.credential;
     try {
-      const res = await api.post('/auth/login', {
-        data: {
-          googleAccessToken,
-        },
-        source: LoginSources.Google,
+      const res = await api.post('/auth/login/google', {
+        googleAccessToken,
       });
-      console.log(res.data);
+      const { user } = res.data;
+      dispatch(setUser(user));
+      return navigate(AppRoutes.Home);
     } catch (err) {
       toast({
         title: 'Uh oh! Something went wrong.',
