@@ -13,7 +13,7 @@ api.interceptors.request.use(
   (config) => {
     const { accessToken } = getTokensFromCookie();
     if (accessToken) {
-      config.headers.Authorization = accessToken;
+      config.headers.Authorization = `Bearer ${accessToken}`;
     }
     return config;
   },
@@ -29,18 +29,21 @@ api.interceptors.response.use(
   },
   async (err) => {
     const { config, response } = err;
+    console.log(response);
 
     if (response && response.status === 403) {
       try {
-        const response = await axios.post(`${appConfig.API_BASE_URL}/refresh`);
+        const response = await axios.get(`${appConfig.API_BASE_URL}/auth/refresh`, {
+          withCredentials: true,
+        });
         const { success } = response.data;
         if (success) {
           const { accessToken } = getTokensFromCookie();
           if (accessToken) {
             config.headers.Authorization = accessToken;
           }
-          await axios(config);
-          return response.data;
+
+          return await api(config);
         }
       } catch (error) {
         console.error('Error refreshing token:', error);
