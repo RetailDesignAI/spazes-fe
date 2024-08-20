@@ -41,7 +41,7 @@ export default function Projects() {
   const changeFilteredProjects = (filteredProjects: Project[]) => setFilteredProjects(filteredProjects);
 
   return (
-    <div className="w-full h-full text-white bg-custom-primary">
+    <div className="w-full h-full text-white bg-custom-primary overflow-auto">
       <ProjectsSearch projects={projects} changeFilteredProjects={changeFilteredProjects} />
       <main className="px-8 py-5 mx-auto md:px-20">
         <motion.div {...fadeAnimation} className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
