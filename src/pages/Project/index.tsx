@@ -19,6 +19,7 @@ import FullScreenLoader from '@/components/FullScreenLoader';
 import useDebouncedValue from '@/hooks/useDebounceValue';
 import CentreImage from './CentreImage';
 import { resetImageEditorState } from '@/providers/redux/project/imageEditorSlice';
+import MoodboardModal from '@/components/MoodboardModal';
 
 export default function Project() {
   const { toast } = useToast();
@@ -100,7 +101,7 @@ export default function Project() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-custom-primary">
+    <div className="w-full min-h-screen bg-custom-primary overflow-hidden">
       <ProjectHeader title={projectName} setProjectName={setProjectName} />
       <div className="h-[calc(100vh-60px)] w-full flex justify-center items-center overflow-auto">
         <div className="flex flex-col lg:flex-row justify-center w-[80%] min-w-[375px] gap-5 p-4 bg-[#121213] lg:py-15">
@@ -152,6 +153,7 @@ export default function Project() {
           <div className="w-full lg:w-2/5">
             <EditDropdown />
             <EditPrompts />
+            <MoodboardModal />
           </div>
         </div>
       </div>
