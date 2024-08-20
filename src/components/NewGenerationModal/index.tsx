@@ -6,6 +6,7 @@ import { Loading } from '@/pages/Home/home.types';
 import HomeInput from '@/pages/Home/HomeInput';
 import { useAppDispatch } from '@/hooks/useRedux';
 import { addImages, changeSelectedImage } from '@/providers/redux/project/projectSlice';
+import { Button } from '../ui/button';
 
 type NewGenerationModalProps = {
   handleDialogChange: (value: boolean) => void;
@@ -49,18 +50,15 @@ const NewGenerationModal = ({ handleDialogChange, sameProject, setSameProject }:
         <DialogHeader>
           <DialogTitle className="mb-8 text-white">Generate new image in</DialogTitle>
           <div className="flex justify-between w-full">
-            <button
-              className="p-4 rounded-lg w-[45%] text-white bg-gradient-to-r shadow-lg from-[#7D4AEA] to-[#9B59B6] shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50 font-semibold"
-              onClick={() => setSameProject(true)}
-            >
+            <Button className="p-4 rounded-lg w-[45%] text-white font-semibold" onClick={() => setSameProject(true)}>
               Same Project
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => navigate('/')}
               className="rounded-lg w-[45%] text-white bg-gradient-to-r shadow-lg from-[#7D4AEA] to-[#9B59B6] shadow-[#7D4AEA]/50 hover:shadow-[#9B59B6]/50 font-semibold"
             >
               New Project
-            </button>
+            </Button>
           </div>
         </DialogHeader>
       )}

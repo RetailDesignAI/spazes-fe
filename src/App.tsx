@@ -9,11 +9,13 @@ import { AppRoutes } from './lib/constants/routes';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 import './App.css';
+// import Template4 from './components/MoodboardModal/MoodboardTemplates/Template-4';
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* <Route path="/test" element={<Template4 />} /> */}
         <Route path={AppRoutes.Home} element={<AppLayout />}>
           <Route index element={<Home />} />
           <Route path={AppRoutes.Project} element={<Project />} />

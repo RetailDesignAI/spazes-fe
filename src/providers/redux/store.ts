@@ -6,11 +6,13 @@ import projectReducer from './project/projectSlice';
 import imageEditorReducer from './project/imageEditorSlice';
 import loadersReducer from './loaders/loadersSlice';
 import uiReducer from './ui/uiSlice';
+import authReducer from './auth/authSlice';
+import userReducer from './auth/userSlice';
 
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['project', 'loaders', 'ui', 'imageEditor'],
+  blacklist: ['project', 'loaders', 'ui', 'imageEditor', 'auth'],
 };
 
 const rootReducer = combineReducers({
@@ -18,6 +20,8 @@ const rootReducer = combineReducers({
   imageEditor: imageEditorReducer,
   loaders: loadersReducer,
   ui: uiReducer,
+  auth: authReducer,
+  user: userReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
